@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import HomePage from './components/HomePage';
+import TypingTest from './components/TypingTest';
 
 function App() {
+  const [testStarted, setTestStarted] = useState(false);
+
+  const startTest = () => {
+    setTestStarted(true);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {testStarted ? <TypingTest /> : <HomePage startTest={startTest} />}
     </div>
   );
 }

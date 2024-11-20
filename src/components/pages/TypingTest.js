@@ -5,14 +5,14 @@ import { musicTextsEn } from "../../texts/music/en";
 import { musicTextsFr } from "../../texts/music/fr";
 
 const TypingTest = () => {
-  const [language, setLanguage] = useState("en"); // Langue par défaut : anglais
+  const [language, setLanguage] = useState("fr"); // Langue par défaut : anglais
   const [theme, setTheme] = useState("food"); // Thème par défaut : nourriture
   const [texts, setTexts] = useState(foodTextsEn); // Textes initiaux
 
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
 
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60); // Duree du test
   const [isTestActive, setIsTestActive] = useState(false);
 
   const [errors, setErrors] = useState(0);
@@ -64,10 +64,12 @@ const TypingTest = () => {
     setTypedText(value);
   };
 
+  // Calcul de la vitesse de frappe
   const calculateWords = (text) => {
     return text.trim().split(/\s+/).length;
   };
 
+  // Mise à jour de la vitesse de frappe
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const wordsTyped = calculateWords(typedText);
@@ -75,10 +77,12 @@ const TypingTest = () => {
     }
   }, [typedText, timeLeft, isTestActive]);
 
+  // Fin du test
   const endTest = () => {
     setIsTestActive(false);
   };
 
+  // Gestion du temps
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -91,6 +95,7 @@ const TypingTest = () => {
   // Calcul de la précision
   const accuracy = ((correctLetters / (correctLetters + errors || 1)) * 100).toFixed(2);
 
+  // Génération du texte mis en forme
   const getHighlightedText = () => {
     return targetText.split("").map((char, index) => {
       let color;
@@ -105,21 +110,31 @@ const TypingTest = () => {
     });
   };
 
+    // Réinitialiser le test
+    const resetTest = () => {
+      setTypedText("");
+      setTimeLeft(60);
+      setErrors(0);
+      setWordsPerMinute(0);
+      setCorrectLetters(0);
+      setIsTestActive(false);
+    };
+
   return (
     <div className="flex flex-col items-center justify-center p-4">
       {/* Sélecteur de langue */}
       <div className="flex mb-4">
         <button
-          onClick={() => setLanguage("en")}
-          className={`mr-2 px-4 py-2 rounded ${language === "en" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          English
-        </button>
-        <button
           onClick={() => setLanguage("fr")}
-          className={`px-4 py-2 rounded ${language === "fr" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          className={`mr-2 px-4 py-2 rounded ${language === "fr" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
         >
           Français
+        </button>
+        <button
+          onClick={() => setLanguage("en")}
+          className={`px-4 py-2 rounded ${language === "en" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          English
         </button>
       </div>
 
@@ -180,6 +195,12 @@ const TypingTest = () => {
           <p>
             {language === "en" ? "Final Accuracy" : "Précision finale"}: {accuracy}%
           </p>
+          <button
+            onClick={resetTest}
+            className="px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300"
+          >
+            {language === "en" ? "Start Again" : "Commencer à nouveau"}
+          </button>
         </div>
       )}
     </div>

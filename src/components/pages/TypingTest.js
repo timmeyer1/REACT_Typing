@@ -40,27 +40,34 @@ const TypingTest = () => {
     setTargetText(texts[randomIndex]);
   }, [texts]);
 
+  // Gestionnaire de frappe
   const handleTyping = (event) => {
     const { value } = event.target;
-
+  
     if (!isTestActive) {
       setIsTestActive(true); // Démarre le test à la première frappe
     }
-
+  
+    // Vérifier si l'utilisateur efface
+    if (value.length < typedText.length) {
+      setTypedText(value); // Mettez à jour le texte tapé sans compter d'erreur
+      return;
+    }
+  
     const lastTypedIndex = value.length - 1;
-
+  
     // Mise à jour des erreurs et des lettres correctes
     if (lastTypedIndex >= 0) {
       const currentCharacter = value[lastTypedIndex];
       const correctCharacter = targetText[lastTypedIndex];
-
+  
       if (currentCharacter === correctCharacter) {
         setCorrectLetters((prev) => prev + 1);
       } else {
         setErrors((prev) => prev + 1);
       }
     }
-
+  
     setTypedText(value);
   };
 

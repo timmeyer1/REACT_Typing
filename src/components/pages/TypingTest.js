@@ -1,26 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { randomTexts } from "../../texts";
+import { foodTextsEn } from "../../texts/food/en";
+import { foodTextsFr } from "../../texts/food/fr";
+import { musicTextsEn } from "../../texts/music/en";
+import { musicTextsFr } from "../../texts/music/fr";
 
 const TypingTest = () => {
-  // État pour stocker le texte cible et le texte tapé
+  const [language, setLanguage] = useState("en"); // Langue par défaut : anglais
+  const [theme, setTheme] = useState("food"); // Thème par défaut : nourriture
+  const [texts, setTexts] = useState(foodTextsEn); // Textes initiaux
+
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
 
-  // État pour le chronomètre et le suivi du test
   const [timeLeft, setTimeLeft] = useState(60);
   const [isTestActive, setIsTestActive] = useState(false);
-  
-  // État pour le suivi des erreurs et la vitesse
+
   const [errors, setErrors] = useState(0);
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
+  const [correctLetters, setCorrectLetters] = useState(0);
 
-  // Génère un texte aléatoire au démarrage
+  // Mise à jour des textes en fonction du thème et de la langue
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * randomTexts.length);
-    setTargetText(randomTexts[randomIndex]);
-  }, []);
+    let selectedTexts = [];
+    if (theme === "food" && language === "en") {
+      selectedTexts = foodTextsEn;
+    } else if (theme === "food" && language === "fr") {
+      selectedTexts = foodTextsFr;
+    } else if (theme === "music" && language === "en") {
+      selectedTexts = musicTextsEn;
+    } else if (theme === "music" && language === "fr") {
+      selectedTexts = musicTextsFr;
+    }
+    setTexts(selectedTexts);
+  }, [theme, language]);
 
-  // Gestion de la saisie de l'utilisateur
+  // Génère un texte aléatoire chaque fois que les textes changent
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * texts.length);
+    setTargetText(texts[randomIndex]);
+  }, [texts]);
+
   const handleTyping = (event) => {
     const { value } = event.target;
 
@@ -28,25 +47,27 @@ const TypingTest = () => {
       setIsTestActive(true); // Démarre le test à la première frappe
     }
 
-    // Vérifier si le texte tapé est correct jusqu'au dernier caractère tapé
-    const currentCharacter = value[value.length - 1];
-    const correctCharacter = targetText[value.length - 1];
+    const lastTypedIndex = value.length - 1;
 
-    if (currentCharacter !== correctCharacter) {
-      setErrors((prev) => prev + 1); // Compte une erreur
-      return; // Arrête ici si une faute est détectée
+    // Mise à jour des erreurs et des lettres correctes
+    if (lastTypedIndex >= 0) {
+      const currentCharacter = value[lastTypedIndex];
+      const correctCharacter = targetText[lastTypedIndex];
+
+      if (currentCharacter === correctCharacter) {
+        setCorrectLetters((prev) => prev + 1);
+      } else {
+        setErrors((prev) => prev + 1);
+      }
     }
 
-    // Si pas de faute, met à jour le texte tapé
     setTypedText(value);
   };
 
-  // Fonction pour calculer les mots tapés
   const calculateWords = (text) => {
     return text.trim().split(/\s+/).length;
   };
 
-  // Calcul de la vitesse en temps réel
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const wordsTyped = calculateWords(typedText);
@@ -54,12 +75,10 @@ const TypingTest = () => {
     }
   }, [typedText, timeLeft, isTestActive]);
 
-  // Fonction pour terminer le test
   const endTest = () => {
     setIsTestActive(false);
   };
 
-  // Démarre le compte à rebours dès que le test commence
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -69,7 +88,9 @@ const TypingTest = () => {
     }
   }, [isTestActive, timeLeft]);
 
-  // Vérifie les correspondances caractère par caractère
+  // Calcul de la précision
+  const accuracy = ((correctLetters / (correctLetters + errors || 1)) * 100).toFixed(2);
+
   const getHighlightedText = () => {
     return targetText.split("").map((char, index) => {
       let color;
@@ -86,11 +107,54 @@ const TypingTest = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="text-2xl font-bold mb-4">Typing Speed Test</h1>
+      {/* Sélecteur de langue */}
+      <div className="flex mb-4">
+        <button
+          onClick={() => setLanguage("en")}
+          className={`mr-2 px-4 py-2 rounded ${language === "en" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          English
+        </button>
+        <button
+          onClick={() => setLanguage("fr")}
+          className={`px-4 py-2 rounded ${language === "fr" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+        >
+          Français
+        </button>
+      </div>
 
-      <div className="text-lg mb-4">Time Left: {timeLeft}s</div>
-      <div className="text-lg mb-4">Words per Minute: {wordsPerMinute}</div>
-      <div className="text-lg mb-4">Errors: {errors}</div>
+      {/* Sélecteur de thème */}
+      <div className="flex mb-4">
+        <button
+          onClick={() => setTheme("food")}
+          className={`mr-2 px-4 py-2 rounded ${theme === "food" ? "bg-green-500 text-white" : "bg-gray-200"}`}
+        >
+          {language === "en" ? "Food" : "Nourriture"}
+        </button>
+        <button
+          onClick={() => setTheme("music")}
+          className={`px-4 py-2 rounded ${theme === "music" ? "bg-green-500 text-white" : "bg-gray-200"}`}
+        >
+          {language === "en" ? "Music" : "Musique"}
+        </button>
+      </div>
+
+      <h1 className="text-2xl font-bold mb-4">
+        {language === "en" ? "Typing Speed Test" : "Test de vitesse de frappe"}
+      </h1>
+
+      <div className="text-lg mb-4">
+        {language === "en" ? "Time Left" : "Temps restant"}: {timeLeft}s
+      </div>
+      <div className="text-lg mb-4">
+        {language === "en" ? "Words per Minute" : "Mots par minute"}: {wordsPerMinute}
+      </div>
+      <div className="text-lg mb-4">
+        {language === "en" ? "Errors" : "Erreurs"}: {errors}
+      </div>
+      <div className="text-lg mb-4">
+        {language === "en" ? "Accuracy" : "Précision"}: {accuracy}%
+      </div>
 
       <div className="border p-4 rounded w-3/4 bg-gray-100 mb-4">
         <p className="text-lg">{getHighlightedText()}</p>
@@ -101,14 +165,21 @@ const TypingTest = () => {
         onChange={handleTyping}
         rows="4"
         className="border p-2 w-3/4"
-        placeholder="Start typing here..."
+        placeholder={language === "en" ? "Start typing here..." : "Commencez à taper ici..."}
         disabled={timeLeft === 0} // Désactive lorsque le test est terminé
       />
 
       {timeLeft === 0 && (
         <div className="mt-4">
-          <p>Final Words per Minute: {wordsPerMinute}</p>
-          <p>Total Errors: {errors}</p>
+          <p>
+            {language === "en" ? "Final Words per Minute" : "Mots par minute final"}: {wordsPerMinute}
+          </p>
+          <p>
+            {language === "en" ? "Total Errors" : "Total des erreurs"}: {errors}
+          </p>
+          <p>
+            {language === "en" ? "Final Accuracy" : "Précision finale"}: {accuracy}%
+          </p>
         </div>
       )}
     </div>

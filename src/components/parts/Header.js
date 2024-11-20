@@ -21,9 +21,6 @@ const Header = () => {
           <Link to="/" className="hover:text-blue-200 transition duration-300">
             Accueil
           </Link>
-          <Link to="/test" className="hover:text-blue-200 transition duration-300">
-            Commencer le Test
-          </Link>
           <Link to="/about" className="hover:text-blue-200 transition duration-300">
             À propos
           </Link>

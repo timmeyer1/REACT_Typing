@@ -83,7 +83,7 @@ app.post('/login', (req, res) => {
         }
 
         // Créer un token JWT
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ username: user.username, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ message: 'Connexion réussie', token });
     });

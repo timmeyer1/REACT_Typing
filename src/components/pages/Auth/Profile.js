@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import Logout from './Logout';  // Importer le composant de déconnexion
+import Logout from './Logout';  // Un exemple de bouton de déconnexion
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -8,8 +8,8 @@ const Profile = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            const decoded = jwtDecode(token); // Décodez le token pour récupérer les données de l'utilisateur
-            setUser(decoded);
+            const decoded = jwtDecode(token);
+            setUser(decoded);  // Décode le token et met l'utilisateur dans l'état
         }
     }, []);
 

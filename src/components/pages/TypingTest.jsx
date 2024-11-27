@@ -13,7 +13,7 @@ const TypingTest = () => {
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
 
-  const [timeLeft, setTimeLeft] = useState(4); // Duree du test
+  const [timeLeft, setTimeLeft] = useState(60); // Duree du test
   const [isTestActive, setIsTestActive] = useState(false);
 
   const [errors, setErrors] = useState(0);

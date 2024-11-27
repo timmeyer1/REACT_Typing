@@ -105,6 +105,7 @@ app.post('/login', (req, res) => {
     });
 });
 
+
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -148,6 +149,35 @@ app.post('/save-score', authenticateToken, (req, res) => {
     });
 });
 
+// Route pour récupérer les 3 meilleurs scores de l'utilisateur
+app.get('/top-scores', authenticateToken, (req, res) => {
+    const email = req.user.email;
+
+    // Récupérer l'ID de l'utilisateur
+    db.query('SELECT id FROM User WHERE email = ?', [email], (err, userResult) => {
+        if (err) {
+            return res.status(500).json({ message: 'Erreur de récupération de l\'utilisateur' });
+        }
+
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+
+        const userId = userResult[0].id;
+
+        // Récupérer les 3 meilleurs scores
+        db.query(
+            'SELECT * FROM Scores WHERE user_id = ? ORDER BY words_per_minute DESC LIMIT 3',
+            [userId],
+            (err, scores) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Erreur de récupération des scores' });
+                }
+                res.json(scores);
+            }
+        );
+    });
+});
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;

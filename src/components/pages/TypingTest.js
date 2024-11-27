@@ -19,6 +19,7 @@ const TypingTest = () => {
   const [errors, setErrors] = useState(0);
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
   const [correctLetters, setCorrectLetters] = useState(0);
+  const [scoreSaved, setScoreSaved] = useState(false);
 
   // Mise à jour des textes en fonction du thème et de la langue
   useEffect(() => {
@@ -121,12 +122,14 @@ const TypingTest = () => {
 
   // Fonction de sauvegarde du score
   const saveScore = async () => {
+    // Empêcher plusieurs sauvegardes
+    if (scoreSaved) return;
+
     try {
       const token = localStorage.getItem('token');
-      console.log('Token récupéré :', token); // Debug log
 
       if (!token) {
-        alert('Pas de token trouvé');
+        alert(language === 'en' ? 'Please log in to save your score' : 'Veuillez vous connecter pour sauvegarder votre score');
         return;
       }
 
@@ -136,16 +139,28 @@ const TypingTest = () => {
         average_errors: errors
       }, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
         }
       });
 
-      console.log('Réponse du serveur :', response.data);
+      // Marquer le score comme sauvegardé
+      setScoreSaved(true);
+
+      alert(language === 'en'
+        ? 'Score saved successfully!'
+        : 'Score sauvegardé avec succès !'
+      );
     } catch (error) {
-      console.error('Erreur détaillée :', error.response ? error.response.data : error.message);
+      console.error('Error saving score:', error);
+      alert(language === 'en'
+        ? 'Failed to save score. Please try again.'
+        : 'Échec de la sauvegarde du score. Veuillez réessayer.'
+      );
     }
   };
+
+
+
 
 
   // Réinitialiser le test
@@ -252,9 +267,17 @@ const TypingTest = () => {
           </button>
           <button
             onClick={saveScore}
-            className="px-6 py-3 bg-green-500 text-white text-lg font-semibold rounded-md hover:bg-green-600 transition duration-300 ml-4"
+            disabled={scoreSaved} // Désactive le bouton si déjà sauvegardé
+            className={`px-6 py-3 text-white text-lg font-semibold rounded-md transition duration-300 ml-4 
+          ${scoreSaved
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600'
+              }`}
           >
-            {language === 'en' ? 'Save Score' : 'Sauvegarder le score'}
+            {language === 'en'
+              ? (scoreSaved ? 'Score Saved' : 'Save Score')
+              : (scoreSaved ? 'Score Sauvegardé' : 'Sauvegarder le score')
+            }
           </button>
         </div>
       )}

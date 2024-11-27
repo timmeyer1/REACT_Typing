@@ -28,20 +28,19 @@ db.connect((err) => {
     }
 });
 
-// Créez la base de données et la table des utilisateurs
-const createUserTable = `CREATE TABLE IF NOT EXISTS User (
+// Création des tables si elles n'existent pas déjà
+const createUserTable = `
+CREATE TABLE IF NOT EXISTS User (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL
 )`;
-
-db.query(createUserTable, (err, result) => {
+db.query(createUserTable, (err) => {
     if (err) throw err;
-    console.log('Table User créée');
+    console.log('Table User vérifiée/créée');
 });
 
-// Créez la table des scores
 const createScoresTable = `
 CREATE TABLE IF NOT EXISTS Scores (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,31 +50,49 @@ CREATE TABLE IF NOT EXISTS Scores (
   average_errors INT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 )`;
-
-db.query(createScoresTable, (err, result) => {
+db.query(createScoresTable, (err) => {
     if (err) throw err;
-    console.log('Table Scores créée');
+    console.log('Table Scores vérifiée/créée');
 });
+
+// Middleware pour vérifier et décoder le token JWT
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: 'Non authentifié. Veuillez vous connecter.' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: 'Session expirée. Veuillez vous reconnecter.' });
+            }
+            return res.status(403).json({ message: 'Token invalide.' });
+        }
+
+        req.user = user;
+        next();
+    });
+};
 
 // Inscription de l'utilisateur
 app.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
 
-    // Vérifiez si l'utilisateur existe déjà
     db.query('SELECT * FROM User WHERE email = ?', [email], async (err, result) => {
         if (result.length > 0) {
-            return res.status(400).json({ message: 'Email déjà utilisé' });
+            return res.status(400).json({ message: 'Email déjà utilisé.' });
         }
 
-        // Hachage du mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insertion de l'utilisateur dans la base de données
-        db.query('INSERT INTO User (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword], (err, result) => {
+        db.query('INSERT INTO User (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword], (err) => {
             if (err) {
-                return res.status(500).json({ message: 'Erreur d\'inscription' });
+                return res.status(500).json({ message: 'Erreur lors de l\'inscription.' });
             }
-            res.status(201).json({ message: 'Utilisateur créé' });
+            res.status(201).json({ message: 'Utilisateur créé avec succès.' });
         });
     });
 });
@@ -84,94 +101,77 @@ app.post('/register', async (req, res) => {
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    // Vérifier si l'utilisateur existe
     db.query('SELECT * FROM User WHERE email = ?', [email], async (err, result) => {
         if (result.length === 0) {
-            return res.status(400).json({ message: 'Utilisateur non trouvé' });
+            return res.status(400).json({ message: 'Utilisateur non trouvé.' });
         }
 
         const user = result[0];
-
-        // Vérifier le mot de passe
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Mot de passe incorrect' });
+            return res.status(400).json({ message: 'Mot de passe incorrect.' });
         }
 
-        // Créer un token JWT
-        const token = jwt.sign({ username: user.username, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { username: user.username, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } // Durée d'expiration du token
+        );
 
-        res.json({ message: 'Connexion réussie', token });
+        res.json({ message: 'Connexion réussie.', token });
     });
 });
 
-
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (token == null) return res.sendStatus(401);
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
-};
-
+// Route protégée pour enregistrer les scores
 app.post('/save-score', authenticateToken, (req, res) => {
     const { words_per_minute, accuracy, average_errors } = req.body;
     const email = req.user.email;
 
-    // Récupérer l'ID de l'utilisateur
     db.query('SELECT id FROM User WHERE email = ?', [email], (err, userResult) => {
         if (err) {
-            return res.status(500).json({ message: 'Erreur de récupération de l\'utilisateur' });
+            return res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur.' });
         }
 
         if (userResult.length === 0) {
-            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+            return res.status(404).json({ message: 'Utilisateur non trouvé.' });
         }
 
         const userId = userResult[0].id;
 
-        // Insérer le score
         db.query(
             'INSERT INTO Scores (user_id, words_per_minute, accuracy, average_errors) VALUES (?, ?, ?, ?)',
             [userId, words_per_minute, accuracy, average_errors],
-            (err, result) => {
+            (err) => {
                 if (err) {
-                    return res.status(500).json({ message: 'Erreur d\'enregistrement du score' });
+                    return res.status(500).json({ message: 'Erreur lors de l\'enregistrement du score.' });
                 }
-                res.status(201).json({ message: 'Score sauvegardé avec succès' });
+                res.status(201).json({ message: 'Score enregistré avec succès.' });
             }
         );
     });
 });
 
-// Route pour récupérer les 3 meilleurs scores de l'utilisateur
+// Route protégée pour récupérer les meilleurs scores
 app.get('/top-scores', authenticateToken, (req, res) => {
     const email = req.user.email;
 
-    // Récupérer l'ID de l'utilisateur
     db.query('SELECT id FROM User WHERE email = ?', [email], (err, userResult) => {
         if (err) {
-            return res.status(500).json({ message: 'Erreur de récupération de l\'utilisateur' });
+            return res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur.' });
         }
 
         if (userResult.length === 0) {
-            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+            return res.status(404).json({ message: 'Utilisateur non trouvé.' });
         }
 
         const userId = userResult[0].id;
 
-        // Récupérer les 3 meilleurs scores
         db.query(
             'SELECT * FROM Scores WHERE user_id = ? ORDER BY words_per_minute DESC LIMIT 3',
             [userId],
             (err, scores) => {
                 if (err) {
-                    return res.status(500).json({ message: 'Erreur de récupération des scores' });
+                    return res.status(500).json({ message: 'Erreur lors de la récupération des scores.' });
                 }
                 res.json(scores);
             }
@@ -179,7 +179,7 @@ app.get('/top-scores', authenticateToken, (req, res) => {
     });
 });
 
-// Démarrer le serveur
+// Démarrage du serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://localhost:${PORT}`);

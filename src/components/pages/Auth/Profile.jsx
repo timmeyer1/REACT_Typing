@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Logout from './Logout';
@@ -7,39 +8,64 @@ const Profile = () => {
     const [user, setUser] = useState(null);
     const [topScores, setTopScores] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                setUser(decoded);
 
-                // Récupérer les meilleurs scores
-                const fetchTopScores = async () => {
-                    try {
-                        const response = await axios.get('http://localhost:5000/top-scores', {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                        setTopScores(response.data);
-                        setIsLoading(false);
-                    } catch (error) {
-                        console.error('Erreur lors de la récupération des scores', error);
-                        setIsLoading(false);
-                    }
-                };
-
-                fetchTopScores();
-            } catch (error) {
-                console.error('Erreur de décodage du token', error);
-            }
+        if (!token) {
+            alert("Vous n'êtes pas authentifié. Veuillez vous connecter.");
+            navigate('/login'); // Redirection immédiate si le token est absent
+            return;
         }
-    }, []);
+
+        try {
+            const decoded = jwtDecode(token);
+
+            // Vérification si le token est expiré
+            if (decoded.exp * 1000 < Date.now()) {
+                alert('Votre session a expiré. Veuillez vous reconnecter.');
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
+            }
+
+            setUser(decoded);
+
+            // Récupération des meilleurs scores
+            const fetchTopScores = async () => {
+                try {
+                    const response = await axios.get('http://localhost:5000/top-scores', {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    setTopScores(response.data);
+                } catch (error) {
+                    console.error('Erreur lors de la récupération des scores', error);
+
+                    // Si le serveur retourne une erreur (500, etc.), déconnecter l'utilisateur
+                    if (error.response && (error.response.status === 500 || error.response.status === 401)) {
+                        alert('Votre session est invalide ou expirée. Veuillez vous reconnecter.');
+                        localStorage.removeItem('token');
+                        navigate('/login');
+                    }
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            fetchTopScores();
+        } catch (error) {
+            console.error('Erreur de décodage du token', error);
+            alert("Une erreur s'est produite. Veuillez vous reconnecter.");
+            localStorage.removeItem('token');
+            navigate('/login');
+        }
+    }, [navigate]);
 
     if (!user) {
-        return <p>Vous n'êtes pas connecté. Veuillez vous connecter.</p>;
+        return <p>Chargement...</p>;
     }
 
     return (

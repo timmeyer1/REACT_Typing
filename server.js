@@ -15,8 +15,8 @@ app.use(cors()); // Permettre les requêtes du front-end React
 // Configuration de la connexion MariaDB
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root', 
-    password: 'admin', 
+    user: 'root',
+    password: 'admin',
     database: 'typing_test',
 });
 
@@ -39,6 +39,22 @@ const createUserTable = `CREATE TABLE IF NOT EXISTS User (
 db.query(createUserTable, (err, result) => {
     if (err) throw err;
     console.log('Table User créée');
+});
+
+// Créez la table des scores
+const createScoresTable = `
+CREATE TABLE IF NOT EXISTS Scores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  words_per_minute FLOAT NOT NULL,
+  accuracy FLOAT NOT NULL,
+  average_errors INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+)`;
+
+db.query(createScoresTable, (err, result) => {
+    if (err) throw err;
+    console.log('Table Scores créée');
 });
 
 // Inscription de l'utilisateur
@@ -88,6 +104,50 @@ app.post('/login', (req, res) => {
         res.json({ message: 'Connexion réussie', token });
     });
 });
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+
+app.post('/save-score', authenticateToken, (req, res) => {
+    const { words_per_minute, accuracy, average_errors } = req.body;
+    const email = req.user.email;
+
+    // Récupérer l'ID de l'utilisateur
+    db.query('SELECT id FROM User WHERE email = ?', [email], (err, userResult) => {
+        if (err) {
+            return res.status(500).json({ message: 'Erreur de récupération de l\'utilisateur' });
+        }
+
+        if (userResult.length === 0) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+
+        const userId = userResult[0].id;
+
+        // Insérer le score
+        db.query(
+            'INSERT INTO Scores (user_id, words_per_minute, accuracy, average_errors) VALUES (?, ?, ?, ?)',
+            [userId, words_per_minute, accuracy, average_errors],
+            (err, result) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Erreur d\'enregistrement du score' });
+                }
+                res.status(201).json({ message: 'Score sauvegardé avec succès' });
+            }
+        );
+    });
+});
+
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;

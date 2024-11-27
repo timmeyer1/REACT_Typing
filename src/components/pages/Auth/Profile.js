@@ -20,7 +20,7 @@ const Profile = () => {
     return (
         <div>
             <h2>Profil</h2>
-            <p>Username: {user.username}</p>
+            <p>Username: {user.email}</p>
             <Logout />
         </div>
     );

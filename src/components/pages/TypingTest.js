@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { foodTextsEn } from "../../texts/food/en";
 import { foodTextsFr } from "../../texts/food/fr";
 import { musicTextsEn } from "../../texts/music/en";
@@ -12,7 +13,7 @@ const TypingTest = () => {
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
 
-  const [timeLeft, setTimeLeft] = useState(60); // Duree du test
+  const [timeLeft, setTimeLeft] = useState(4); // Duree du test
   const [isTestActive, setIsTestActive] = useState(false);
 
   const [errors, setErrors] = useState(0);
@@ -43,31 +44,31 @@ const TypingTest = () => {
   // Gestionnaire de frappe
   const handleTyping = (event) => {
     const { value } = event.target;
-  
+
     if (!isTestActive) {
       setIsTestActive(true); // Démarre le test à la première frappe
     }
-  
+
     // Vérifier si l'utilisateur efface
     if (value.length < typedText.length) {
       setTypedText(value); // Mettez à jour le texte tapé sans compter d'erreur
       return;
     }
-  
+
     const lastTypedIndex = value.length - 1;
-  
+
     // Mise à jour des erreurs et des lettres correctes
     if (lastTypedIndex >= 0) {
       const currentCharacter = value[lastTypedIndex];
       const correctCharacter = targetText[lastTypedIndex];
-  
+
       if (currentCharacter === correctCharacter) {
         setCorrectLetters((prev) => prev + 1);
       } else {
         setErrors((prev) => prev + 1);
       }
     }
-  
+
     setTypedText(value);
   };
 
@@ -116,6 +117,36 @@ const TypingTest = () => {
       );
     });
   };
+
+
+  // Fonction de sauvegarde du score
+  const saveScore = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log('Token récupéré :', token); // Debug log
+
+      if (!token) {
+        alert('Pas de token trouvé');
+        return;
+      }
+
+      const response = await axios.post('http://localhost:5000/save-score', {
+        words_per_minute: parseFloat(wordsPerMinute),
+        accuracy: parseFloat(accuracy),
+        average_errors: errors
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Réponse du serveur :', response.data);
+    } catch (error) {
+      console.error('Erreur détaillée :', error.response ? error.response.data : error.message);
+    }
+  };
+
 
   // Réinitialiser le test
   const resetTest = () => {
@@ -218,6 +249,12 @@ const TypingTest = () => {
             className="px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300"
           >
             {language === "en" ? "Start Again" : "Commencer à nouveau"}
+          </button>
+          <button
+            onClick={saveScore}
+            className="px-6 py-3 bg-green-500 text-white text-lg font-semibold rounded-md hover:bg-green-600 transition duration-300 ml-4"
+          >
+            {language === 'en' ? 'Save Score' : 'Sauvegarder le score'}
           </button>
         </div>
       )}

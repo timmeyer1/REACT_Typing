@@ -11,97 +11,93 @@ const Profile = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const fetchUserDataAndScores = async () => {
+            const token = localStorage.getItem('token');
 
-        if (!token) {
-            alert("Vous n'êtes pas authentifié. Veuillez vous connecter.");
-            navigate('/login'); // Redirection immédiate si le token est absent
-            return;
-        }
-
-        try {
-            const decoded = jwtDecode(token);
-
-            // Vérification si le token est expiré
-            if (decoded.exp * 1000 < Date.now()) {
-                alert('Votre session a expiré. Veuillez vous reconnecter.');
-                localStorage.removeItem('token');
+            if (!token) {
                 navigate('/login');
                 return;
             }
 
-            setUser(decoded);
-
-            // Récupération des meilleurs scores
-            const fetchTopScores = async () => {
-                try {
-                    const response = await axios.get('http://localhost:5000/top-scores', {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    setTopScores(response.data);
-                } catch (error) {
-                    console.error('Erreur lors de la récupération des scores', error);
-
-                    // Si le serveur retourne une erreur (500, etc.), déconnecter l'utilisateur
-                    if (error.response && (error.response.status === 500 || error.response.status === 401)) {
-                        alert('Votre session est invalide ou expirée. Veuillez vous reconnecter.');
-                        localStorage.removeItem('token');
-                        navigate('/login');
-                    }
-                } finally {
-                    setIsLoading(false);
+            try {
+                const decoded = jwtDecode(token);
+                if (decoded.exp * 1000 < Date.now()) {
+                    throw new Error('Token expiré');
                 }
-            };
 
-            fetchTopScores();
-        } catch (error) {
-            console.error('Erreur de décodage du token', error);
-            alert("Une erreur s'est produite. Veuillez vous reconnecter.");
-            localStorage.removeItem('token');
-            navigate('/login');
-        }
+                setUser(decoded);
+
+                const response = await axios.get('http://localhost:5000/top-scores', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setTopScores(response.data);
+            } catch (error) {
+                console.error('Erreur:', error);
+                localStorage.removeItem('token');
+                navigate('/login');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserDataAndScores();
     }, [navigate]);
 
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-indigo-500"></div>
+            </div>
+        );
+    }
+
     if (!user) {
-        return <p>Chargement...</p>;
+        return null;
     }
 
     return (
-        <div className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4">Profil</h2>
-            <p className="mb-2">Email: {user.email}</p>
-            <Logout />
+        <div className="bg-gray-100 min-h-screen">
+            <div className="container mx-auto px-4 py-8">
+                <div className="bg-white rounded-lg shadow-xl overflow-hidden">
+                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+                        <h2 className="text-3xl font-bold text-white">
+                            Profil de {user.username.charAt(0).toUpperCase() + user.username.slice(1)}
+                        </h2>
+                    </div>
+                    <div className="p-6">
+                        <Logout className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300" />
 
-            <div className="mt-6">
-                <h3 className="text-xl font-semibold mb-4">Vos 3 meilleurs scores</h3>
-                {isLoading ? (
-                    <p>Chargement des scores...</p>
-                ) : topScores.length === 0 ? (
-                    <p>Aucun score enregistré</p>
-                ) : (
-                    <table className="w-full border-collapse">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border p-2">Classement</th>
-                                <th className="border p-2">Mots par minute</th>
-                                <th className="border p-2">Précision</th>
-                                <th className="border p-2">Erreurs moyennes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {topScores.map((score, index) => (
-                                <tr key={score.id} className={index % 2 === 0 ? 'bg-gray-100' : ''}>
-                                    <td className="border p-2 text-center">{index + 1}</td>
-                                    <td className="border p-2 text-center">{score.words_per_minute.toFixed(2)}</td>
-                                    <td className="border p-2 text-center">{score.accuracy.toFixed(2)}%</td>
-                                    <td className="border p-2 text-center">{score.average_errors}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+                        <div className="mt-8">
+                            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Vos meilleurs scores</h3>
+                            {topScores.length === 0 ? (
+                                <p className="text-gray-600">Aucun score enregistré</p>
+                            ) : (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-gray-200">
+                                                <th className="p-3 font-semibold">Rang</th>
+                                                <th className="p-3 font-semibold">Mots/min</th>
+                                                <th className="p-3 font-semibold">Précision</th>
+                                                <th className="p-3 font-semibold">Erreurs moy.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {topScores.map((score, index) => (
+                                                <tr key={score.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                                    <td className="p-3 font-medium">{index + 1}</td>
+                                                    <td className="p-3">{score.words_per_minute.toFixed(2)}</td>
+                                                    <td className="p-3">{score.accuracy.toFixed(2)}%</td>
+                                                    <td className="p-3">{score.average_errors}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -86,11 +86,6 @@ const TypingTest = () => {
     }
   }, [typedText, timeLeft, isTestActive]);
 
-  // Fin du test
-  const endTest = () => {
-    setIsTestActive(false);
-  };
-
   // Gestion du temps
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
@@ -121,29 +116,49 @@ const TypingTest = () => {
 
 
   // Fonction de sauvegarde du score
+  const endTest = () => {
+    setIsTestActive(false);
+
+    // Stocker les données du score dans localStorage
+    localStorage.setItem('typingTestScore', JSON.stringify({
+      wordsPerMinute,
+      accuracy,
+      errors,
+      timestamp: Date.now()
+    }));
+  };
+
   const saveScore = async () => {
-    // Empêcher plusieurs sauvegardes
-    if (scoreSaved) return;
+    // Récupérer les données du score depuis localStorage
+    const storedScore = JSON.parse(localStorage.getItem('typingTestScore'));
+
+    if (!storedScore) {
+      alert('Aucun score à sauvegarder');
+      return;
+    }
 
     try {
       const token = localStorage.getItem('token');
-
       if (!token) {
-        alert(language === 'en' ? 'Please log in to save your score' : 'Veuillez vous connecter pour sauvegarder votre score');
+        alert(language === 'en'
+          ? 'Please log in to save your score'
+          : 'Veuillez vous connecter pour sauvegarder votre score'
+        );
         return;
       }
 
-      const response = await axios.post('http://localhost:5000/save-score', {
-        words_per_minute: parseFloat(wordsPerMinute),
-        accuracy: parseFloat(accuracy),
-        average_errors: errors
+      await axios.post('http://localhost:5000/save-score', {
+        words_per_minute: parseFloat(storedScore.wordsPerMinute),
+        accuracy: parseFloat(storedScore.accuracy),
+        average_errors: storedScore.errors
       }, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      // Marquer le score comme sauvegardé
+      // Supprimer le score stocké après sauvegarde
+      localStorage.removeItem('typingTestScore');
       setScoreSaved(true);
 
       alert(language === 'en'
@@ -159,10 +174,6 @@ const TypingTest = () => {
     }
   };
 
-
-
-
-
   // Réinitialiser le test
   const resetTest = () => {
     setTypedText("");
@@ -174,113 +185,176 @@ const TypingTest = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      {/* Sélecteur de langue */}
-      <div className="flex mb-4">
-        <button
-          onClick={() => setLanguage("fr")}
-          className={`mr-2 px-4 py-2 rounded ${language === "fr" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          Français
-        </button>
-        <button
-          onClick={() => setLanguage("en")}
-          className={`px-4 py-2 rounded ${language === "en" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-        >
-          English
-        </button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row">
+          {/* Colonne de gauche pour les boutons */}
+          <div className="md:w-1/3 pr-8 mb-8 md:mb-0">
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 text-indigo-600">
+                {language === "en" ? "Settings" : "Paramètres"}
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-gray-700">
+                    {language === "en" ? "Language" : "Langue"}
+                  </h3>
+                  <div className="flex flex-col space-y-2">
+                    <button
+                      onClick={() => setLanguage("fr")}
+                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${language === "fr"
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                      Français
+                    </button>
+                    <button
+                      onClick={() => setLanguage("en")}
+                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${language === "en"
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                      English
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium mb-2 text-gray-700">
+                    {language === "en" ? "Theme" : "Thème"}
+                  </h3>
+                  <div className="flex flex-col space-y-2">
+                    <button
+                      onClick={() => setTheme("food")}
+                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${theme === "food"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                      {language === "en" ? "Text" : "Texte"}
+                    </button>
+                    <button
+                      onClick={() => setTheme("music")}
+                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${theme === "music"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        }`}
+                    >
+                      {language === "en" ? "Words" : "Mots"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* Sélecteur de thème */}
-      <div className="flex mb-4">
-        <button
-          onClick={() => setTheme("food")}
-          className={`mr-2 px-4 py-2 rounded ${theme === "food" ? "bg-green-500 text-white" : "bg-gray-200"}`}
-        >
-          {language === "en" ? "Food" : "Nourriture"}
-        </button>
-        <button
-          onClick={() => setTheme("music")}
-          className={`px-4 py-2 rounded ${theme === "music" ? "bg-green-500 text-white" : "bg-gray-200"}`}
-        >
-          {language === "en" ? "Music" : "Musique"}
-        </button>
-      </div>
+          {/* Colonne de droite pour le test */}
+          <div className="md:w-2/3">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="p-8">
+                <h1 className="text-3xl font-bold text-center mb-8 text-indigo-600">
+                  {language === "en" ? "Typing Speed Test" : "Test de vitesse de frappe"}
+                </h1>
 
-      <h1 className="text-2xl font-bold mb-4">
-        {language === "en" ? "Typing Speed Test" : "Test de vitesse de frappe"}
-      </h1>
+                {timeLeft > 0 && (
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-indigo-100 p-4 rounded-lg text-center">
+                      <div className="text-sm text-indigo-600 font-medium">
+                        {language === "en" ? "Time Left" : "Temps restant"}
+                      </div>
+                      <div className="text-3xl font-bold text-indigo-800">{timeLeft}s</div>
+                    </div>
+                    <div className="bg-purple-100 p-4 rounded-lg text-center">
+                      <div className="text-sm text-purple-600 font-medium">
+                        {language === "en" ? "Words per Minute" : "Mots par minute"}
+                      </div>
+                      <div className="text-3xl font-bold text-purple-800">{wordsPerMinute}</div>
+                    </div>
+                    <div className="bg-red-100 p-4 rounded-lg text-center">
+                      <div className="text-sm text-red-600 font-medium">
+                        {language === "en" ? "Errors" : "Erreurs"}
+                      </div>
+                      <div className="text-3xl font-bold text-red-800">{errors}</div>
+                    </div>
+                    <div className="bg-green-100 p-4 rounded-lg text-center">
+                      <div className="text-sm text-green-600 font-medium">
+                        {language === "en" ? "Accuracy" : "Précision"}
+                      </div>
+                      <div className="text-3xl font-bold text-green-800">{accuracy}%</div>
+                    </div>
+                  </div>
+                )}
 
-      <div className="text-lg mb-4">
-        {language === "en" ? "Time Left" : "Temps restant"}: {timeLeft}s
-      </div>
-      <div className="text-lg mb-4">
-        {language === "en" ? "Words per Minute" : "Mots par minute"}: {wordsPerMinute}
-      </div>
-      <div className="text-lg mb-4">
-        {language === "en" ? "Errors" : "Erreurs"}: {errors}
-      </div>
-      <div className="text-lg mb-4">
-        {language === "en" ? "Accuracy" : "Précision"}: {accuracy}%
-      </div>
+                <div className="mb-8">
+                  <div className="bg-gray-100 p-6 rounded-lg">
+                    <p className="text-lg leading-relaxed">{getHighlightedText()}</p>
+                  </div>
+                </div>
 
-      <button
-        className="px-4 py-2 bg-gray-500 text-white rounded mb-4 flex items-center"
-        onClick={() => window.location.reload()}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" className="mr-2">
-          <path fill="currentColor" d="M12.079 2.25c-4.794 0-8.734 3.663-9.118 8.333H2a.75.75 0 0 0-.528 1.283l1.68 1.666a.75.75 0 0 0 1.056 0l1.68-1.666a.75.75 0 0 0-.528-1.283h-.893c.38-3.831 3.638-6.833 7.612-6.833a7.66 7.66 0 0 1 6.537 3.643a.75.75 0 1 0 1.277-.786A9.16 9.16 0 0 0 12.08 2.25m8.761 8.217a.75.75 0 0 0-1.054 0L18.1 12.133a.75.75 0 0 0 .527 1.284h.899c-.382 3.83-3.651 6.833-7.644 6.833a7.7 7.7 0 0 1-6.565-3.644a.75.75 0 1 0-1.277.788a9.2 9.2 0 0 0 7.842 4.356c4.808 0 8.765-3.66 9.15-8.333H22a.75.75 0 0 0 .527-1.284z" />
-        </svg>
-        Refresh
-      </button>
+                <textarea
+                  value={typedText}
+                  onChange={handleTyping}
+                  rows="4"
+                  className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder={language === "en" ? "Start typing here..." : "Commencez à taper ici..."}
+                  disabled={timeLeft === 0}
+                />
 
-      <div className="border p-4 rounded w-3/4 bg-gray-100 mb-4">
-        <p className="text-lg">{getHighlightedText()}</p>
-      </div>
-
-
-      <textarea
-        value={typedText}
-        onChange={handleTyping}
-        rows="4"
-        className="border p-2 w-3/4"
-        placeholder={language === "en" ? "Start typing here..." : "Commencez à taper ici..."}
-        disabled={timeLeft === 0} // Désactive lorsque le test est terminé
-      />
-
-      {timeLeft === 0 && (
-        <div className="mt-4">
-          <p>
-            {language === "en" ? "Final Words per Minute" : "Mots par minute final"}: {wordsPerMinute}
-          </p>
-          <p>
-            {language === "en" ? "Total Errors" : "Total des erreurs"}: {errors}
-          </p>
-          <p>
-            {language === "en" ? "Final Accuracy" : "Précision finale"}: {accuracy}%
-          </p>
-          <button
-            onClick={resetTest}
-            className="px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300"
-          >
-            {language === "en" ? "Start Again" : "Commencer à nouveau"}
-          </button>
-          <button
-            onClick={saveScore}
-            disabled={scoreSaved} // Désactive le bouton si déjà sauvegardé
-            className={`px-6 py-3 text-white text-lg font-semibold rounded-md transition duration-300 ml-4 
-          ${scoreSaved
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-green-500 hover:bg-green-600'
-              }`}
-          >
-            {language === 'en'
-              ? (scoreSaved ? 'Score Saved' : 'Save Score')
-              : (scoreSaved ? 'Score Sauvegardé' : 'Sauvegarder le score')
-            }
-          </button>
+                {timeLeft === 0 && (
+                  <div className="mt-8 text-center">
+                    <h2 className="text-2xl font-bold mb-4 text-indigo-600">
+                      {language === "en" ? "Test Results" : "Résultats du test"}
+                    </h2>
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="bg-indigo-100 p-4 rounded-lg">
+                        <div className="text-sm text-indigo-600 font-medium">
+                          {language === "en" ? "Final WPM" : "MPM final"}
+                        </div>
+                        <div className="text-2xl font-bold text-indigo-800">{wordsPerMinute}</div>
+                      </div>
+                      <div className="bg-red-100 p-4 rounded-lg">
+                        <div className="text-sm text-red-600 font-medium">
+                          {language === "en" ? "Total Errors" : "Erreurs totales"}
+                        </div>
+                        <div className="text-2xl font-bold text-red-800">{errors}</div>
+                      </div>
+                      <div className="bg-green-100 p-4 rounded-lg">
+                        <div className="text-sm text-green-600 font-medium">
+                          {language === "en" ? "Final Accuracy" : "Précision finale"}
+                        </div>
+                        <div className="text-2xl font-bold text-green-800">{accuracy}%</div>
+                      </div>
+                    </div>
+                    <div className="flex justify-center space-x-4">
+                      <button
+                        onClick={resetTest}
+                        className="px-6 py-3 bg-indigo-600 text-white text-lg font-semibold rounded-full hover:bg-indigo-700 transition duration-300"
+                      >
+                        {language === "en" ? "Start Again" : "Recommencer"}
+                      </button>
+                      <button
+                        onClick={saveScore}
+                        disabled={scoreSaved}
+                        className={`px-6 py-3 text-white text-lg font-semibold rounded-full transition duration-300 
+                        ${scoreSaved
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-green-500 hover:bg-green-600'
+                          }`}
+                      >
+                        {language === 'en'
+                          ? (scoreSaved ? 'Score Saved' : 'Save Score')
+                          : (scoreSaved ? 'Score Sauvegardé' : 'Sauvegarder le score')
+                        }
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

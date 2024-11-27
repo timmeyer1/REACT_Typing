@@ -8,18 +8,40 @@ const HomePage = () => {
     navigate('/test'); 
   };
 
-  document.title = 'Typing Speed Test';
+  React.useEffect(() => {
+    document.title = 'Typing Speed Test - Test de Vitesse de Frappe';
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center">
-      <h1 className="text-4xl font-bold text-blue-600 mb-4">Vitesse de frappe</h1>
-      <p className="text-lg text-gray-700 mb-8">Mesurez votre vitesse de frappe au clavier en quelques secondes !</p>
-      <button
-        onClick={handleStartTest}
-        className="px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-md hover:bg-blue-600 transition duration-300"
-      >
-        Commencer le test
-      </button>
+    <div className="min-h-screen bg-gradient-to-b from-indigo-100 to-purple-100 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl w-full space-y-8 text-center">
+        <h1 className="text-5xl font-extrabold text-transparent p-2 bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+          Typing Speed Test
+        </h1>
+        <p className="mt-3 text-xl text-gray-700">
+          Mesurez et améliorez votre vitesse de frappe en un instant.
+        </p>
+        <div className="flex justify-center space-x-4 mt-6">
+          <div className="text-center">
+            <span className="block text-3xl font-bold text-indigo-600">60+</span>
+            <span className="text-sm text-gray-600">Textes personnalisés</span>
+          </div>
+          <div className="text-center">
+            <span className="block text-3xl font-bold text-purple-600">2</span>
+            <span className="text-sm text-gray-600">Langues (fr/en)</span>
+          </div>
+          <div className="text-center">
+            <span className="block text-3xl font-bold text-indigo-600">2</span>
+            <span className="text-sm text-gray-600">Catégories</span>
+          </div>
+        </div>
+        <button
+          onClick={handleStartTest}
+          className="mt-8 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-full hover:from-indigo-700 hover:to-purple-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+        >
+          Commencer le test
+        </button>
+      </div>
     </div>
   );
 };

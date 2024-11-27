@@ -167,7 +167,7 @@ app.get('/top-scores', authenticateToken, (req, res) => {
         const userId = userResult[0].id;
 
         db.query(
-            'SELECT * FROM Scores WHERE user_id = ? ORDER BY words_per_minute DESC LIMIT 3',
+            'SELECT * FROM Scores WHERE user_id = ? ORDER BY words_per_minute DESC LIMIT 10',
             [userId],
             (err, scores) => {
                 if (err) {

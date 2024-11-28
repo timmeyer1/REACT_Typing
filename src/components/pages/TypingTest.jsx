@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from 'axios';
 import { foodTextsEn } from "../../texts/food/en";
 import { foodTextsFr } from "../../texts/food/fr";
@@ -6,79 +6,57 @@ import { musicTextsEn } from "../../texts/music/en";
 import { musicTextsFr } from "../../texts/music/fr";
 
 const TypingTest = () => {
-  const [language, setLanguage] = useState("fr"); // Langue par défaut : anglais
-  const [theme, setTheme] = useState("food"); // Thème par défaut : nourriture
-  const [texts, setTexts] = useState(foodTextsEn); // Textes initiaux
-
+  const [language, setLanguage] = useState("fr");
+  const [theme, setTheme] = useState("food");
+  const [texts, setTexts] = useState(foodTextsEn);
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
-
-  const [timeLeft, setTimeLeft] = useState(60); // Duree du test
+  const [timeLeft, setTimeLeft] = useState(60);
   const [isTestActive, setIsTestActive] = useState(false);
-
+  const [testStarted, setTestStarted] = useState(false);
   const [errors, setErrors] = useState(0);
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
   const [correctLetters, setCorrectLetters] = useState(0);
-  const [scoreSaved, setScoreSaved] = useState(false);
+  const [hasSavedScore, setHasSavedScore] = useState(false); // New state to prevent duplicate saves
 
-  // Mise à jour des textes en fonction du thème et de la langue
   useEffect(() => {
-    let selectedTexts = [];
-    if (theme === "food" && language === "en") {
-      selectedTexts = foodTextsEn;
-    } else if (theme === "food" && language === "fr") {
-      selectedTexts = foodTextsFr;
-    } else if (theme === "music" && language === "en") {
-      selectedTexts = musicTextsEn;
-    } else if (theme === "music" && language === "fr") {
-      selectedTexts = musicTextsFr;
-    }
-    setTexts(selectedTexts);
+    const textMap = {
+      food: { en: foodTextsEn, fr: foodTextsFr },
+      music: { en: musicTextsEn, fr: musicTextsFr }
+    };
+    setTexts(textMap[theme][language]);
   }, [theme, language]);
 
-  // Génère un texte aléatoire chaque fois que les textes changent
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * texts.length);
     setTargetText(texts[randomIndex]);
   }, [texts]);
 
-  // Gestionnaire de frappe
   const handleTyping = (event) => {
     const { value } = event.target;
-
     if (!isTestActive) {
-      setIsTestActive(true); // Démarre le test à la première frappe
+      setIsTestActive(true);
+      setTestStarted(true);
     }
-
-    // Vérifier si l'utilisateur efface
     if (value.length < typedText.length) {
-      setTypedText(value); // Mettez à jour le texte tapé sans compter d'erreur
+      setTypedText(value);
       return;
     }
-
     const lastTypedIndex = value.length - 1;
-
-    // Mise à jour des erreurs et des lettres correctes
     if (lastTypedIndex >= 0) {
       const currentCharacter = value[lastTypedIndex];
       const correctCharacter = targetText[lastTypedIndex];
-
       if (currentCharacter === correctCharacter) {
         setCorrectLetters((prev) => prev + 1);
       } else {
         setErrors((prev) => prev + 1);
       }
     }
-
     setTypedText(value);
   };
 
-  // Calcul de la vitesse de frappe
-  const calculateWords = (text) => {
-    return text.trim().split(/\s+/).length;
-  };
+  const calculateWords = (text) => text.trim().split(/\s+/).length;
 
-  // Mise à jour de la vitesse de frappe
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const wordsTyped = calculateWords(typedText);
@@ -86,20 +64,55 @@ const TypingTest = () => {
     }
   }, [typedText, timeLeft, isTestActive]);
 
-  // Gestion du temps
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timerId);
-    } else if (timeLeft === 0) {
-      endTest(); // Termine le test lorsque le temps est écoulé
+    } else if (timeLeft === 0 && !hasSavedScore) { // Ensure score is saved only once
+      endTest();
+      autoSaveScore();
+      setHasSavedScore(true); // Mark as saved
     }
-  }, [isTestActive, timeLeft]);
+  }, [isTestActive, timeLeft, hasSavedScore]); // Add hasSavedScore dependency
 
-  // Calcul de la précision
+  const autoSaveScore = useCallback(async () => {
+    const scoreData = {
+      words_per_minute: parseFloat(wordsPerMinute),
+      accuracy: parseFloat(((correctLetters / (correctLetters + errors || 1)) * 100).toFixed(2)),
+      average_errors: errors
+    };
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await axios.post('http://localhost:5000/save-score', scoreData, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      } catch (error) {
+        localStorage.setItem('typingTestScore', JSON.stringify(scoreData));
+        console.error('Auto-save failed', error);
+      }
+    } else {
+      localStorage.setItem('typingTestScore', JSON.stringify(scoreData));
+    }
+  }, [wordsPerMinute, correctLetters, errors]);
+
+  const endTest = () => {
+    setIsTestActive(false);
+  };
+
+  const resetTest = () => {
+    setTypedText("");
+    setTimeLeft(60);
+    setErrors(0);
+    setWordsPerMinute(0);
+    setCorrectLetters(0);
+    setIsTestActive(false);
+    setTestStarted(false);
+    setHasSavedScore(false); // Reset save state
+  };
+
   const accuracy = ((correctLetters / (correctLetters + errors || 1)) * 100).toFixed(2);
 
-  // Génération du texte mis en forme
   const getHighlightedText = () => {
     return targetText.split("").map((char, index) => {
       let color;
@@ -114,82 +127,49 @@ const TypingTest = () => {
     });
   };
 
-
-  // Fonction de sauvegarde du score
-  const endTest = () => {
-    setIsTestActive(false);
-
-    // Stocker les données du score dans localStorage
-    localStorage.setItem('typingTestScore', JSON.stringify({
-      wordsPerMinute,
-      accuracy,
-      errors,
-      timestamp: Date.now()
-    }));
-  };
-
-  const saveScore = async () => {
-    // Récupérer les données du score depuis localStorage
-    const storedScore = JSON.parse(localStorage.getItem('typingTestScore'));
-
-    if (!storedScore) {
-      alert('Aucun score à sauvegarder');
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert(language === 'en'
-          ? 'Please log in to save your score'
-          : 'Veuillez vous connecter pour sauvegarder votre score'
-        );
-        return;
-      }
-
-      await axios.post('http://localhost:5000/save-score', {
-        words_per_minute: parseFloat(storedScore.wordsPerMinute),
-        accuracy: parseFloat(storedScore.accuracy),
-        average_errors: storedScore.errors
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      // Supprimer le score stocké après sauvegarde
-      localStorage.removeItem('typingTestScore');
-      setScoreSaved(true);
-
-      alert(language === 'en'
-        ? 'Score saved successfully!'
-        : 'Score sauvegardé avec succès !'
-      );
-    } catch (error) {
-      console.error('Error saving score:', error);
-      alert(language === 'en'
-        ? 'Failed to save score. Please try again.'
-        : 'Échec de la sauvegarde du score. Veuillez réessayer.'
-      );
-    }
-  };
-
-  // Réinitialiser le test
-  const resetTest = () => {
-    setTypedText("");
-    setTimeLeft(60);
-    setErrors(0);
-    setWordsPerMinute(0);
-    setCorrectLetters(0);
-    setIsTestActive(false);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row">
-          {/* Colonne de gauche pour les boutons */}
+          {/* Language and Theme Settings */}
           <div className="md:w-1/3 pr-8 mb-8 md:mb-0">
+            {/* Statistics Section */}
+            <div
+              className={`bg-white rounded-xl shadow-lg p-6 mb-4 transition-all duration-500 ease-in-out overflow-hidden ${testStarted ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+            >
+              <h2 className="text-xl font-semibold mb-4 text-indigo-600">
+                {language === "en" ? "Statistics" : "Statistiques"}
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-indigo-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-indigo-600 font-medium">
+                    {language === "en" ? "Time Left" : "Temps restant"}
+                  </div>
+                  <div className="text-3xl font-bold text-indigo-800">{timeLeft}s</div>
+                </div>
+                <div className="bg-purple-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-purple-600 font-medium">
+                    {language === "en" ? "Words per Minute" : "Mots par minute"}
+                  </div>
+                  <div className="text-3xl font-bold text-purple-800">{wordsPerMinute}</div>
+                </div>
+                <div className="bg-red-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-red-600 font-medium">
+                    {language === "en" ? "Errors" : "Erreurs"}
+                  </div>
+                  <div className="text-3xl font-bold text-red-800">{errors}</div>
+                </div>
+                <div className="bg-green-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-green-600 font-medium">
+                    {language === "en" ? "Accuracy" : "Précision"}
+                  </div>
+                  <div className="text-3xl font-bold text-green-800">{accuracy}%</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Settings Section */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-semibold mb-4 text-indigo-600">
                 {language === "en" ? "Settings" : "Paramètres"}
@@ -232,7 +212,7 @@ const TypingTest = () => {
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                         }`}
                     >
-                      {language === "en" ? "Text" : "Texte"}
+                      {language === "en" ? "Food" : "Nourriture"}
                     </button>
                     <button
                       onClick={() => setTheme("music")}
@@ -241,7 +221,7 @@ const TypingTest = () => {
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                         }`}
                     >
-                      {language === "en" ? "Words" : "Mots"}
+                      {language === "en" ? "Music" : "Musique"}
                     </button>
                   </div>
                 </div>
@@ -249,49 +229,31 @@ const TypingTest = () => {
             </div>
           </div>
 
-          {/* Colonne de droite pour le test */}
+          {/* Test Area */}
           <div className="md:w-2/3">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <div className="p-8">
-                <h1 className="text-3xl font-bold text-center mb-8 text-indigo-600">
+                <h1 className="text-3xl font-bold text-center mb-2 text-indigo-600">
                   {language === "en" ? "Typing Speed Test" : "Test de vitesse de frappe"}
                 </h1>
 
-                {timeLeft > 0 && (
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="bg-indigo-100 p-4 rounded-lg text-center">
-                      <div className="text-sm text-indigo-600 font-medium">
-                        {language === "en" ? "Time Left" : "Temps restant"}
-                      </div>
-                      <div className="text-3xl font-bold text-indigo-800">{timeLeft}s</div>
-                    </div>
-                    <div className="bg-purple-100 p-4 rounded-lg text-center">
-                      <div className="text-sm text-purple-600 font-medium">
-                        {language === "en" ? "Words per Minute" : "Mots par minute"}
-                      </div>
-                      <div className="text-3xl font-bold text-purple-800">{wordsPerMinute}</div>
-                    </div>
-                    <div className="bg-red-100 p-4 rounded-lg text-center">
-                      <div className="text-sm text-red-600 font-medium">
-                        {language === "en" ? "Errors" : "Erreurs"}
-                      </div>
-                      <div className="text-3xl font-bold text-red-800">{errors}</div>
-                    </div>
-                    <div className="bg-green-100 p-4 rounded-lg text-center">
-                      <div className="text-sm text-green-600 font-medium">
-                        {language === "en" ? "Accuracy" : "Précision"}
-                      </div>
-                      <div className="text-3xl font-bold text-green-800">{accuracy}%</div>
-                    </div>
-                  </div>
+                {/* Informative Message for Unauthenticated Users */}
+                {!localStorage.getItem("token") && (
+                  <p className="text-center text-[14px] text-gray-500 mb-8">
+                    {language === "en"
+                      ? "Log in to save your score!"
+                      : "Connectez-vous pour enregistrer votre score !"}
+                  </p>
                 )}
 
+                {/* Target Text Display */}
                 <div className="mb-8">
                   <div className="bg-gray-100 p-6 rounded-lg">
                     <p className="text-lg leading-relaxed">{getHighlightedText()}</p>
                   </div>
                 </div>
 
+                {/* Typing Area */}
                 <textarea
                   value={typedText}
                   onChange={handleTyping}
@@ -301,51 +263,15 @@ const TypingTest = () => {
                   disabled={timeLeft === 0}
                 />
 
+                {/* Restart Section */}
                 {timeLeft === 0 && (
                   <div className="mt-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4 text-indigo-600">
-                      {language === "en" ? "Test Results" : "Résultats du test"}
-                    </h2>
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                      <div className="bg-indigo-100 p-4 rounded-lg">
-                        <div className="text-sm text-indigo-600 font-medium">
-                          {language === "en" ? "Final WPM" : "MPM final"}
-                        </div>
-                        <div className="text-2xl font-bold text-indigo-800">{wordsPerMinute}</div>
-                      </div>
-                      <div className="bg-red-100 p-4 rounded-lg">
-                        <div className="text-sm text-red-600 font-medium">
-                          {language === "en" ? "Total Errors" : "Erreurs totales"}
-                        </div>
-                        <div className="text-2xl font-bold text-red-800">{errors}</div>
-                      </div>
-                      <div className="bg-green-100 p-4 rounded-lg">
-                        <div className="text-sm text-green-600 font-medium">
-                          {language === "en" ? "Final Accuracy" : "Précision finale"}
-                        </div>
-                        <div className="text-2xl font-bold text-green-800">{accuracy}%</div>
-                      </div>
-                    </div>
                     <div className="flex justify-center space-x-4">
                       <button
                         onClick={resetTest}
                         className="px-6 py-3 bg-indigo-600 text-white text-lg font-semibold rounded-full hover:bg-indigo-700 transition duration-300"
                       >
                         {language === "en" ? "Start Again" : "Recommencer"}
-                      </button>
-                      <button
-                        onClick={saveScore}
-                        disabled={scoreSaved}
-                        className={`px-6 py-3 text-white text-lg font-semibold rounded-full transition duration-300 
-                        ${scoreSaved
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-green-500 hover:bg-green-600'
-                          }`}
-                      >
-                        {language === 'en'
-                          ? (scoreSaved ? 'Score Saved' : 'Save Score')
-                          : (scoreSaved ? 'Score Sauvegardé' : 'Sauvegarder le score')
-                        }
                       </button>
                     </div>
                   </div>

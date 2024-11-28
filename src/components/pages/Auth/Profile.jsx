@@ -79,7 +79,7 @@ const Profile = () => {
                                                 <th className="p-3 font-semibold">Rang</th>
                                                 <th className="p-3 font-semibold">Mots/min</th>
                                                 <th className="p-3 font-semibold">Précision</th>
-                                                <th className="p-3 font-semibold">Erreurs moy.</th>
+                                                <th className="p-3 font-semibold">Nombre d'erreurs</th>
                                             </tr>
                                         </thead>
                                         <tbody>

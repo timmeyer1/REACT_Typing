@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from 'axios';
-import { foodTextsEn } from "../../texts/food/en";
-import { foodTextsFr } from "../../texts/food/fr";
-import { musicTextsEn } from "../../texts/music/en";
-import { musicTextsFr } from "../../texts/music/fr";
+import { textsEn } from "../../texts/texts/en";
+import { textsFr } from "../../texts/texts/fr";
+import { wordsEn } from "../../texts/words/en";
+import { wordsFr } from "../../texts/words/fr";
 
 const TypingTest = () => {
   const [language, setLanguage] = useState("fr");
-  const [theme, setTheme] = useState("food");
-  const [texts, setTexts] = useState(foodTextsEn);
+  const [theme, setTheme] = useState("text");
+  const [texts, setTexts] = useState(textsEn);
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [timeLeft, setTimeLeft] = useState(60);
@@ -17,12 +17,13 @@ const TypingTest = () => {
   const [errors, setErrors] = useState(0);
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
   const [correctLetters, setCorrectLetters] = useState(0);
-  const [hasSavedScore, setHasSavedScore] = useState(false); // New state to prevent duplicate saves
+  const [hasSavedScore, setHasSavedScore] = useState(false);
+  const [isTestCompleted, setIsTestCompleted] = useState(false);
 
   useEffect(() => {
     const textMap = {
-      food: { en: foodTextsEn, fr: foodTextsFr },
-      music: { en: musicTextsEn, fr: musicTextsFr }
+      text: { en: textsEn, fr: textsFr },
+      word: { en: wordsEn, fr: wordsFr }
     };
     setTexts(textMap[theme][language]);
   }, [theme, language]);
@@ -38,10 +39,17 @@ const TypingTest = () => {
       setIsTestActive(true);
       setTestStarted(true);
     }
+
+    if (value === targetText) {
+      endTestEarly();
+      return;
+    }
+
     if (value.length < typedText.length) {
       setTypedText(value);
       return;
     }
+
     const lastTypedIndex = value.length - 1;
     if (lastTypedIndex >= 0) {
       const currentCharacter = value[lastTypedIndex];
@@ -64,16 +72,25 @@ const TypingTest = () => {
     }
   }, [typedText, timeLeft, isTestActive]);
 
+  const endTestEarly = () => {
+    if (!isTestCompleted) {
+      setIsTestCompleted(true);
+      setIsTestActive(false);
+      autoSaveScore();
+      setHasSavedScore(true);
+    }
+  };
+
   useEffect(() => {
     if (isTestActive && timeLeft > 0) {
       const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timerId);
-    } else if (timeLeft === 0 && !hasSavedScore) { // Ensure score is saved only once
+    } else if ((timeLeft === 0 || isTestCompleted) && !hasSavedScore) {
       endTest();
       autoSaveScore();
-      setHasSavedScore(true); // Mark as saved
+      setHasSavedScore(true);
     }
-  }, [isTestActive, timeLeft, hasSavedScore]); // Add hasSavedScore dependency
+  }, [isTestActive, timeLeft, isTestCompleted, hasSavedScore]);
 
   const autoSaveScore = useCallback(async () => {
     const scoreData = {
@@ -101,6 +118,9 @@ const TypingTest = () => {
   };
 
   const resetTest = () => {
+    const randomIndex = Math.floor(Math.random() * texts.length);
+    setTargetText(texts[randomIndex]);
+
     setTypedText("");
     setTimeLeft(60);
     setErrors(0);
@@ -108,7 +128,8 @@ const TypingTest = () => {
     setCorrectLetters(0);
     setIsTestActive(false);
     setTestStarted(false);
-    setHasSavedScore(false); // Reset save state
+    setHasSavedScore(false);
+    setIsTestCompleted(false);
   };
 
   const accuracy = ((correctLetters / (correctLetters + errors || 1)) * 100).toFixed(2);
@@ -131,9 +152,7 @@ const TypingTest = () => {
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row">
-          {/* Language and Theme Settings */}
           <div className="md:w-1/3 pr-8 mb-8 md:mb-0">
-            {/* Statistics Section */}
             <div
               className={`bg-white rounded-xl shadow-lg p-6 mb-4 transition-all duration-500 ease-in-out overflow-hidden ${testStarted ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
@@ -169,7 +188,6 @@ const TypingTest = () => {
               </div>
             </div>
 
-            {/* Settings Section */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-semibold mb-4 text-indigo-600">
                 {language === "en" ? "Settings" : "Paramètres"}
@@ -206,22 +224,22 @@ const TypingTest = () => {
                   </h3>
                   <div className="flex flex-col space-y-2">
                     <button
-                      onClick={() => setTheme("food")}
-                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${theme === "food"
+                      onClick={() => setTheme("text")}
+                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${theme === "text"
                         ? "bg-green-500 text-white"
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                         }`}
                     >
-                      {language === "en" ? "Food" : "Nourriture"}
+                      {language === "en" ? "Text" : "Texte"}
                     </button>
                     <button
-                      onClick={() => setTheme("music")}
-                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${theme === "music"
+                      onClick={() => setTheme("word")}
+                      className={`px-4 py-2 rounded-full transition-colors duration-300 ${theme === "word"
                         ? "bg-green-500 text-white"
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                         }`}
                     >
-                      {language === "en" ? "Music" : "Musique"}
+                      {language === "en" ? "Words" : "Mots"}
                     </button>
                   </div>
                 </div>
@@ -229,7 +247,6 @@ const TypingTest = () => {
             </div>
           </div>
 
-          {/* Test Area */}
           <div className="md:w-2/3">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <div className="p-8">
@@ -237,7 +254,6 @@ const TypingTest = () => {
                   {language === "en" ? "Typing Speed Test" : "Test de vitesse de frappe"}
                 </h1>
 
-                {/* Informative Message for Unauthenticated Users */}
                 {!localStorage.getItem("token") && (
                   <p className="text-center text-[14px] text-gray-500 mb-8">
                     {language === "en"
@@ -246,25 +262,22 @@ const TypingTest = () => {
                   </p>
                 )}
 
-                {/* Target Text Display */}
                 <div className="mb-8">
-                  <div className="bg-gray-100 p-6 rounded-lg">
+                  <div className="bg-gray-100 p-6 rounded-lg select-none">
                     <p className="text-lg leading-relaxed">{getHighlightedText()}</p>
                   </div>
                 </div>
 
-                {/* Typing Area */}
                 <textarea
                   value={typedText}
                   onChange={handleTyping}
                   rows="4"
                   className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder={language === "en" ? "Start typing here..." : "Commencez à taper ici..."}
-                  disabled={timeLeft === 0}
+                  disabled={timeLeft === 0 || isTestCompleted}
                 />
 
-                {/* Restart Section */}
-                {timeLeft === 0 && (
+                {(timeLeft === 0 || isTestCompleted) && (
                   <div className="mt-8 text-center">
                     <div className="flex justify-center space-x-4">
                       <button

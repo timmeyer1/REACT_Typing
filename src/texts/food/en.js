@@ -1,8 +1,0 @@
-export const foodTextsEn = [
-    "The burger, an iconic dish of American cuisine, has captured the taste buds of people around the world thanks to its simplicity and versatility. Primarily composed of a soft bun, a juicy patty-often beef but also chicken, fish, or even vegetarian alternatives-and a variety of toppings, the burger is much more than just a sandwich. Each region has added its unique twist: from the spicy burgers of the southern United States to gourmet creations in Michelin-starred restaurants, the possibilities are endless.",
-
-    "Pizza, a beloved dish that originated in Italy, has become a global favorite, celebrated for its deliciousness and versatility. At its core, pizza consists of a round, flat base of dough topped with a variety of ingredients, including tomato sauce, cheese, and an array of toppings ranging from vegetables to meats. The classic Margherita, with its simple combination of fresh mozzarella, basil, and tomatoes, exemplifies the beauty of traditional pizza. However, the creativity surrounding pizza knows no bounds, leading to countless regional variations and innovative toppings.",
-
-    "Chicken wings have become a beloved snack and meal option around the world, known for their crispy texture and rich flavors. Originating from the United States, particularly Buffalo, New York, these delectable morsels have evolved into a staple at parties, sporting events, and casual gatherings. The appeal of chicken wings lies not only in their taste but also in their versatility; they can be prepared in numerous ways to suit any palate."
-  ];
-  

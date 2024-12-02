@@ -50,7 +50,7 @@ export const textsFr = [
 
   "Minecraft, développé par Mojang en 2009, est un jeu de jeu de construction en monde ouvert a rapidement capturé l'imaginaire des joueurs grâce à sa simplicité, son monde pixelisé et ses possibilités infinies.",
 
-  `Dans le premier jeu The Legend of Zelda (1986), vous pouviez commencer le jeu sans aucune arme. Il fallait trouver l'épée en parlant à un vieil homme dans une grotte. Cela a donné naissance à la célèbre phrase : "It's dangerous to go alone! Take this.", devenue emblématique dans la culture pop.`,
+  `Dans le premier jeu The Legend of Zelda (1986), vous pouviez commencer le jeu sans aucune arme. `,
 
   "L'e-sport est un secteur en pleine expansion qui regroupe des compétitions de jeux vidéo au niveau professionnel. Des jeux comme League of Legends, Dota 2, Counter-Strike et Fortnite attirent des millions de spectateurs, tandis que les meilleurs joueurs professionnels sont devenus de véritables célébrités.",
 

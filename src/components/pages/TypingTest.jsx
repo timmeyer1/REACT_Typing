@@ -9,6 +9,9 @@ const TypingTest = () => {
   const [language, setLanguage] = useState("fr");
   const [theme, setTheme] = useState("text");
   const [texts, setTexts] = useState(textsEn);
+  const [words, setWords] = useState(wordsFr);
+  const [targetTexts, setTargetTexts] = useState([]);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [timeLeft, setTimeLeft] = useState(60);
@@ -25,13 +28,54 @@ const TypingTest = () => {
       text: { en: textsEn, fr: textsFr },
       word: { en: wordsEn, fr: wordsFr }
     };
-    setTexts(textMap[theme][language]);
+    setTexts(textMap['text'][language]);
+    setWords(textMap['word'][language]);
   }, [theme, language]);
 
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * texts.length);
-    setTargetText(texts[randomIndex]);
+  const generateRandomTexts = useCallback((count = 3) => {
+    if (texts.length < count) {
+      console.warn("Not enough texts in the source list to generate the required number.");
+      return texts; 
+    }
+    const shuffledTexts = [...texts].sort(() => 0.5 - Math.random());
+    return shuffledTexts.slice(0, count);
   }, [texts]);
+
+  const generateRandomWords = useCallback((count = 60) => {
+    const selectedWords = [];
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * words.length);
+      selectedWords.push(words[randomIndex]);
+    }
+    return selectedWords.join(' ');
+  }, [words]);
+
+  useEffect(() => {
+    if (theme === 'text') {
+      const randomTexts = generateRandomTexts();
+      setTargetTexts(randomTexts);
+      setTargetText(randomTexts.join(" ")); 
+      setCurrentTextIndex(0);
+    } else {
+      const randomWordText = generateRandomWords();
+      setTargetText(randomWordText);
+      setTargetTexts([]);
+    }
+  }, [texts, words, theme, generateRandomTexts, generateRandomWords]);
+
+  const handleNextText = () => {
+    if (currentTextIndex < targetTexts.length - 1) {
+      const nextIndex = currentTextIndex + 1;
+      setCurrentTextIndex(nextIndex);
+      setTargetText(targetTexts[nextIndex]);
+      setTypedText(""); // Réinitialise le texte saisi pour le nouveau texte.
+      setErrors(0); // Réinitialise le compteur d'erreurs.
+      setCorrectLetters(0);
+    } else {
+      console.log("All texts completed. Ending test early.");
+      endTestEarly(); // Termine le test s'il n'y a plus de textes.
+    }
+  };
 
   const handleTyping = (event) => {
     const { value } = event.target;
@@ -41,7 +85,7 @@ const TypingTest = () => {
     }
 
     if (value === targetText) {
-      endTestEarly();
+      handleNextText();
       return;
     }
 
@@ -118,8 +162,16 @@ const TypingTest = () => {
   };
 
   const resetTest = () => {
-    const randomIndex = Math.floor(Math.random() * texts.length);
-    setTargetText(texts[randomIndex]);
+    if (theme === 'text') {
+      const randomTexts = generateRandomTexts();
+      setTargetTexts(randomTexts);
+      setTargetText(randomTexts[0]);
+      setCurrentTextIndex(0);
+    } else {
+      const randomWordText = generateRandomWords();
+      setTargetText(randomWordText);
+      setTargetTexts([]);
+    }
 
     setTypedText("");
     setTimeLeft(60);
@@ -133,6 +185,7 @@ const TypingTest = () => {
   };
 
   const accuracy = ((correctLetters / (correctLetters + errors || 1)) * 100).toFixed(2);
+
 
   const getHighlightedText = () => {
     return targetText.split("").map((char, index) => {
@@ -267,6 +320,15 @@ const TypingTest = () => {
                     <p className="text-lg leading-relaxed">{getHighlightedText()}</p>
                   </div>
                 </div>
+
+
+                {theme === 'text' && targetTexts.length > 0 && (
+                  <div className="text-center text-sm text-gray-500 mb-4">
+                    {language === "en"
+                      ? `Text ${currentTextIndex + 1} of ${targetTexts.length}`
+                      : `Texte ${currentTextIndex + 1} sur ${targetTexts.length}`}
+                  </div>
+                )}
 
                 <textarea
                   value={typedText}

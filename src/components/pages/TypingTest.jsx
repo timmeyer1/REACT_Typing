@@ -14,7 +14,7 @@ const TypingTest = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [targetText, setTargetText] = useState("");
   const [typedText, setTypedText] = useState("");
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(4);
   const [isTestActive, setIsTestActive] = useState(false);
   const [testStarted, setTestStarted] = useState(false);
   const [errors, setErrors] = useState(0);
@@ -35,7 +35,7 @@ const TypingTest = () => {
   const generateRandomTexts = useCallback((count = 3) => {
     if (texts.length < count) {
       console.warn("Not enough texts in the source list to generate the required number.");
-      return texts; 
+      return texts;
     }
     const shuffledTexts = [...texts].sort(() => 0.5 - Math.random());
     return shuffledTexts.slice(0, count);
@@ -54,7 +54,7 @@ const TypingTest = () => {
     if (theme === 'text') {
       const randomTexts = generateRandomTexts();
       setTargetTexts(randomTexts);
-      setTargetText(randomTexts.join(" ")); 
+      setTargetText(randomTexts.join(" "));
       setCurrentTextIndex(0);
     } else {
       const randomWordText = generateRandomWords();
@@ -163,14 +163,15 @@ const TypingTest = () => {
 
   const resetTest = () => {
     if (theme === 'text') {
-      const randomTexts = generateRandomTexts();
-      setTargetTexts(randomTexts);
-      setTargetText(randomTexts[0]);
-      setCurrentTextIndex(0);
+      // Générer trois textes aléatoires et les mettre dans le champ
+      const randomTexts = generateRandomTexts(); // Assure-toi que cette fonction génère 3 textes
+      setTargetTexts(randomTexts); // Mettre à jour l'état avec ces trois textes
+      setTargetText(randomTexts.join(' ')); // Joindre les trois textes pour les afficher dans le textarea
+      setCurrentTextIndex(0); // Réinitialiser l'index du texte courant
     } else {
       const randomWordText = generateRandomWords();
       setTargetText(randomWordText);
-      setTargetTexts([]);
+      setTargetTexts([]); // Réinitialiser targetTexts si tu es en mode 'word'
     }
 
     setTypedText("");
@@ -320,15 +321,6 @@ const TypingTest = () => {
                     <p className="text-lg leading-relaxed">{getHighlightedText()}</p>
                   </div>
                 </div>
-
-
-                {theme === 'text' && targetTexts.length > 0 && (
-                  <div className="text-center text-sm text-gray-500 mb-4">
-                    {language === "en"
-                      ? `Text ${currentTextIndex + 1} of ${targetTexts.length}`
-                      : `Texte ${currentTextIndex + 1} sur ${targetTexts.length}`}
-                  </div>
-                )}
 
                 <textarea
                   value={typedText}

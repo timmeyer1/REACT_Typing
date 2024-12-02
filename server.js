@@ -115,7 +115,7 @@ app.post('/login', (req, res) => {
         const token = jwt.sign(
             { username: user.username, email: user.email },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' } // Durée d'expiration du token
+            { expiresIn: '24h' } // Durée d'expiration du token
         );
 
         res.json({ message: 'Connexion réussie.', token });

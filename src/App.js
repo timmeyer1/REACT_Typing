@@ -7,6 +7,7 @@ import Header from './components/parts/Header';
 // Import depuis pages
 import HomePage from './components/pages/HomePage';
 import TypingTest from './components/pages/TypingTest';
+import About from './components/pages/About';
 // Auth
 import Register from './components/pages/Auth/Register';
 import Login from './components/pages/Auth/Login';
@@ -26,7 +27,7 @@ function App() {
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-
+        <Route path="/about" element={<PrivateRoute><About /></PrivateRoute>} />
       </Routes>
     </Router>
   );

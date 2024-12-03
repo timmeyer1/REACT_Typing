@@ -4,6 +4,17 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Logout from './Logout';
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(date);
+};
+
 const Profile = () => {
     const [user, setUser] = useState(null);
     const [topScores, setTopScores] = useState([]);
@@ -80,6 +91,7 @@ const Profile = () => {
                                                 <th className="p-3 font-semibold">Mots/min</th>
                                                 <th className="p-3 font-semibold">Précision</th>
                                                 <th className="p-3 font-semibold">Nombre d'erreurs</th>
+                                                <th className="p-3 font-semibold">Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -89,6 +101,7 @@ const Profile = () => {
                                                     <td className="p-3">{score.words_per_minute.toFixed(2)}</td>
                                                     <td className="p-3">{score.accuracy.toFixed(2)}%</td>
                                                     <td className="p-3">{score.average_errors}</td>
+                                                    <td className="p-3">{formatDate(score.date_typed)}</td>
                                                 </tr>
                                             ))}
                                         </tbody>

@@ -32,7 +32,7 @@ const TypingTest = () => {
       const shuffled = [...currentTexts].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, 3).join(" ");
     }
-    return Array(60).fill().map(() => 
+    return Array(60).fill().map(() =>
       currentTexts[Math.floor(Math.random() * currentTexts.length)]
     ).join(' ');
   }, [state.theme, state.language]);
@@ -130,8 +130,8 @@ const TypingTest = () => {
     return state.targetText.split("").map((char, index) => (
       <span
         key={index}
-        className={index < state.typedText.length ? 
-          (char === state.typedText[index] ? "text-green-500" : "text-red-500") : 
+        className={index < state.typedText.length ?
+          (char === state.typedText[index] ? "text-green-500" : "text-red-500") :
           ""}
       >
         {char}
@@ -145,8 +145,12 @@ const TypingTest = () => {
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row">
+          {/* Sidebar */}
           <div className="md:w-1/3 pr-8 mb-8 md:mb-0">
-            <div className={`bg-white rounded-xl shadow-lg p-6 mb-4 transition-all duration-500 ease-in-out overflow-hidden ${state.testStarted ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+            {/* Statistics Section */}
+            <div
+              className={`bg-white rounded-xl shadow-lg p-6 mb-4 transition-all duration-500 ease-in-out overflow-hidden ${state.testStarted ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}
+            >
               <h2 className="text-xl font-semibold mb-4 text-indigo-600">
                 {state.language === "en" ? "Statistics" : "Statistiques"}
               </h2>
@@ -155,7 +159,7 @@ const TypingTest = () => {
                   { label: state.language === "en" ? "Time Left" : "Temps restant", value: `${state.timeLeft}s`, bg: "indigo" },
                   { label: state.language === "en" ? "Words per Minute" : "Mots par minute", value: state.wordsPerMinute, bg: "purple" },
                   { label: state.language === "en" ? "Errors" : "Erreurs", value: state.errors, bg: "red" },
-                  { label: state.language === "en" ? "Accuracy" : "Précision", value: `${accuracy}%`, bg: "green" }
+                  { label: state.language === "en" ? "Accuracy" : "Précision", value: `${accuracy}%`, bg: "green" },
                 ].map(({ label, value, bg }, i) => (
                   <div key={i} className={`bg-${bg}-100 p-4 rounded-lg text-center`}>
                     <div className={`text-sm text-${bg}-600 font-medium`}>{label}</div>
@@ -165,6 +169,7 @@ const TypingTest = () => {
               </div>
             </div>
 
+            {/* Settings Section */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-semibold mb-4 text-indigo-600">
                 {state.language === "en" ? "Settings" : "Paramètres"}
@@ -175,20 +180,20 @@ const TypingTest = () => {
                     title: state.language === "en" ? "Language" : "Langue",
                     options: [
                       { value: "fr", label: "Français" },
-                      { value: "en", label: "English" }
+                      { value: "en", label: "English" },
                     ],
                     current: state.language,
-                    setter: (lang) => setState(prev => ({ ...prev, language: lang }))
+                    setter: (lang) => setState((prev) => ({ ...prev, language: lang })),
                   },
                   {
                     title: state.language === "en" ? "Theme" : "Thème",
                     options: [
                       { value: "text", label: state.language === "en" ? "Text" : "Texte" },
-                      { value: "word", label: state.language === "en" ? "Words" : "Mots" }
+                      { value: "word", label: state.language === "en" ? "Words" : "Mots" },
                     ],
                     current: state.theme,
-                    setter: (theme) => setState(prev => ({ ...prev, theme }))
-                  }
+                    setter: (theme) => setState((prev) => ({ ...prev, theme })),
+                  },
                 ].map((section, i) => (
                   <div key={i}>
                     <h3 className="text-lg font-medium mb-2 text-gray-700">{section.title}</h3>
@@ -197,11 +202,10 @@ const TypingTest = () => {
                         <button
                           key={j}
                           onClick={() => section.setter(option.value)}
-                          className={`px-4 py-2 rounded-full transition-colors duration-300 ${
-                            section.current === option.value
+                          className={`px-4 py-2 rounded-full transition-colors duration-300 ${section.current === option.value
                               ? "bg-indigo-600 text-white"
                               : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          }`}
+                            }`}
                         >
                           {option.label}
                         </button>
@@ -213,6 +217,7 @@ const TypingTest = () => {
             </div>
           </div>
 
+          {/* Main Test Section */}
           <div className="md:w-2/3">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <div className="p-8">
@@ -259,6 +264,7 @@ const TypingTest = () => {
       </div>
     </div>
   );
+
 };
 
 export default TypingTest;

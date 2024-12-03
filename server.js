@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS Scores (
   words_per_minute FLOAT NOT NULL,
   accuracy FLOAT NOT NULL,
   average_errors INT NOT NULL,
+  date_typed DATETIME NOT NULL,
   FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 )`;
 db.query(createScoresTable, (err) => {
@@ -126,6 +127,7 @@ app.post('/login', (req, res) => {
 app.post('/save-score', authenticateToken, (req, res) => {
     const { words_per_minute, accuracy, average_errors } = req.body;
     const email = req.user.email;
+    const current_date = new Date(); // Obtenir la date et l'heure actuelles
 
     db.query('SELECT id FROM User WHERE email = ?', [email], (err, userResult) => {
         if (err) {
@@ -139,8 +141,8 @@ app.post('/save-score', authenticateToken, (req, res) => {
         const userId = userResult[0].id;
 
         db.query(
-            'INSERT INTO Scores (user_id, words_per_minute, accuracy, average_errors) VALUES (?, ?, ?, ?)',
-            [userId, words_per_minute, accuracy, average_errors],
+            'INSERT INTO Scores (user_id, words_per_minute, accuracy, average_errors, date_typed) VALUES (?, ?, ?, ?, ?)',
+            [userId, words_per_minute, accuracy, average_errors, current_date],
             (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Erreur lors de l\'enregistrement du score.' });

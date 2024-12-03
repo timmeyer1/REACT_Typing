@@ -43,6 +43,10 @@ export const textsFr = [
 
   "La chute du mur de Berlin en 1989 est un événement historique majeur qui a symbolisé la fin de la Guerre froide et la réconciliation de l'Allemagne après des décennies de division. Le mur, construit en 1961 par le régime est-allemand, séparait Berlin en deux, empêchant les citoyens de l'Allemagne de l'Est de fuir vers l'Ouest.",
 
+  "En 1932, l’Australie a déclaré la guerre… aux émeus, de grands oiseaux incapables de voler, car ils dévastaient les cultures.",
+
+  "Pendant la guerre froide, la CIA a envisagé d’utiliser des pigeons équipés de caméras miniatures pour espionner l’Union soviétique.",
+
   // ---------------------------------------- Jeux-vidéos ---------------------------------------- //
   "Les premiers jeux vidéo remontent aux années 1950, mais c'est en 1972 que l'industrie a pris son envol avec la création de Pong, un jeu d'arcade simple mais innovant, développé par Atari.",
 
@@ -54,6 +58,15 @@ export const textsFr = [
 
   "L'e-sport est un secteur en pleine expansion qui regroupe des compétitions de jeux vidéo au niveau professionnel. Des jeux comme League of Legends, Dota 2, Counter-Strike et Fortnite attirent des millions de spectateurs, tandis que les meilleurs joueurs professionnels sont devenus de véritables célébrités.",
 
+  "Dans le premier The Sims, les Sims pouvaient mourir en essayant de cuisiner s'ils n'avaient pas appris à utiliser correctement une cuisinière.",
+
+  "Les développeurs de Diablo II ont inclus un niveau secret où les joueurs combattent des hordes de vaches armées de haches.",
+
+  "Toru Iwatani, le créateur de Pac-Man, s'est inspiré d'une pizza à laquelle il manquait une part pour créer le design emblématique du personnage.",
+
+  "Dans The Sims 2, un bug rare provoquait une inondation infinie si un Sim prenait une douche à côté d’une fenêtre ouverte",
+
+  "Dans le jeu original DOOM, l’écran du HUD affiche le visage de votre personnage (Doomguy) réagissant à ses blessures.",
 
 
   // ---------------------------------------- Sport ---------------------------------------- //

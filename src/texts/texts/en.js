@@ -1,54 +1,87 @@
 export const textsEn = [
 
-  // ---------------------------------------- Nourriture ---------------------------------------- //
-  "Sushi, originating from Japan, has evolved over centuries from a preservation technique to one of the most beloved and refined cuisines in the world. Originally, fish was fermented with rice to preserve it, but over time, sushi became a fresh dish with vinegared rice and various fillings such as fish, vegetables, and sometimes fruits. The dish gained international popularity in the 20th century, and now sushi bars and restaurants can be found around the globe, serving everything from traditional nigiri to modern sushi rolls.",
+  // ---------------------------------------- Food ---------------------------------------- //
+  "The baguette, the emblem of French baking, embodies both simplicity and artisanal excellence. This iconic recipe, made with a few basic ingredients, offers an authentic and rewarding culinary experience.",
 
-  "The history of chocolate can be traced back over 3,000 years to ancient Mesoamerican cultures, where cacao beans were used in religious ceremonies and as currency. The Aztecs and Mayans even drank a bitter chocolate beverage made from ground cacao beans, spices, and water. It wasn't until the 16th century, when chocolate was introduced to Europe by the Spanish, that sugar was added to sweeten it. The combination of sugar and cocoa soon spread across Europe, eventually leading to the creation of solid chocolate, and it has since become one of the world's most popular treats.",
+  "Boeuf bourguignon is a dish of beef braised in red wine, and served with a garnish of pearl onions, mushrooms and bacon. It is one of the most popular dishes in France, and although it is often considered a Burgundy specialty, boeuf bourguignon actually originated in Paris.",
 
-  "The burger, an iconic dish of American cuisine, has captured the taste buds of people around the world thanks to its simplicity and versatility. Primarily composed of a soft bun, a juicy patty-often beef but also chicken, fish, or even vegetarian alternatives-and a variety of toppings, the burger is much more than just a sandwich. Each region has added its unique twist: from the spicy burgers of the southern United States to gourmet creations in Michelin-starred restaurants, the possibilities are endless.",
+  `Originally, Raclette du Valais is traditionally melted over a wood fire, then by electric raclette ovens since the 1950s.`,
 
-  "Pizza, a beloved dish that originated in Italy, has become a global favorite, celebrated for its deliciousness and versatility. At its core, pizza consists of a round, flat base of dough topped with a variety of ingredients, including tomato sauce, cheese, and an array of toppings ranging from vegetables to meats. The classic Margherita, with its simple combination of fresh mozzarella, basil, and tomatoes, exemplifies the beauty of traditional pizza. However, the creativity surrounding pizza knows no bounds, leading to countless regional variations and innovative toppings.",
+  "Foufou is a paste or purée, solid or soft according to the consumer's taste, made from boiled and pounded flours or tubers. It is made from cassava, corn, plantain or yam, and is eaten with a sauce on the side.",
 
-  "Chicken wings have become a beloved snack and meal option around the world, known for their crispy texture and rich flavors. Originating from the United States, particularly Buffalo, New York, these delectable morsels have evolved into a staple at parties, sporting events, and casual gatherings. The appeal of chicken wings lies not only in their taste but also in their versatility; they can be prepared in numerous ways to suit any palate.",
+  "A taco is an antojito (light dish, snack) of Mexican cuisine that consists of a corn tortilla filled (usually with several typical Mexican gastronomy ingredients, including a sauce) folded in two.",
 
-  "The history of pasta dates back to ancient China, where noodles were first made from rice or wheat. However, it was in Italy that pasta evolved into the diverse and intricate form we know today. Italian pasta comes in numerous shapes and sizes, each suited for specific sauces and preparations. The first recorded mention of pasta in Italy dates back to the 12th century, and it quickly became a staple of Italian cuisine. From spaghetti to ravioli, lasagna, and fusilli, pasta has become an essential part of the global culinary landscape.",
+  "Saucisson is an essential charcuterie specialty in French cuisine, appreciated for its richness of flavors and diversity. Made from pork, sometimes poultry or beef, it is seasoned with spices and herbs, then air-dried.",
 
-  "Ice cream is one of the world's favorite desserts, with its origins dating back to ancient China, where a frozen dessert made from milk, rice, and snow was enjoyed by emperors. In the 16th century, European aristocrats began to indulge in frozen fruit-based desserts. However, it wasn't until the 18th century that ice cream began to resemble the creamy treat we know today, with the invention of modern refrigeration techniques. By the 20th century, ice cream became a widely accessible treat for people of all ages and is now enjoyed in countless flavors and variations, from classic vanilla to exotic creations like matcha or salted caramel.",
+  "Cordon bleu is traditionally prepared with chicken or veal, stuffed with ham and cheese, then breaded and fried. This mixture of textures - crunchy on the outside and melting on the inside - makes it a real delight. Cheese, often Gruyere or Emmental, pairs perfectly with ham, creating a harmony of flavors.",
+
+  "Ratatouille is an iconic Provencal dish that harmoniously blends summer vegetables such as zucchini, eggplant, tomatoes, and peppers.",
+
+  "Burgundy snails are a refined French specialty, eaten at festive meals. Prepared with butter, garlic, parsley, and sometimes white wine, snails are cooked in their shells and served as a starter.",
 
 
-  // ---------------------------------------- Histoire ---------------------------------------- //
-  "The Renaissance, which began in Italy in the 14th century, was a cultural movement that saw a revival of interest in the art, science, and philosophy of ancient Greece and Rome. This period marked a major turning point in European history, as thinkers like Leonardo da Vinci, Michelangelo, and Galileo Galilei challenged the existing knowledge and understanding of the world. The Renaissance spread across Europe, leading to significant developments in art, literature, and science. It ultimately laid the foundation for the modern world, influencing everything from politics to education and the arts.",
+  // ---------------------------------------- Geography ---------------------------------------- //
+  "The Eiffel Tower, emblem of the French capital, was built between 1887 and 1889 for the Universal Exhibition in Paris. At 330 meters high, it was for a long time the tallest monument in the world but surpassed by the Chrysler Building in New York.",
 
-  "The Industrial Revolution, which began in Britain in the late 18th century, was a period of rapid industrial growth and technological innovation that changed the way people lived and worked. The invention of the steam engine, the mechanization of textile production, and advancements in transportation, such as railroads and steamships, transformed economies and societies. This era led to urbanization, the growth of factories, and the rise of the working class. However, it also brought about significant social and environmental challenges, such as poor working conditions, pollution, and inequality. The Industrial Revolution ultimately set the stage for the modern capitalist economy.",
+  "Mont-Saint-Michel, located in Normandy, is an architectural marvel and a UNESCO World Heritage Site.",
 
-  "The French Revolution, which began in 1789, was a radical and transformative period in French history that overthrew the monarchy and established the First French Republic. The revolution was driven by widespread discontent with the monarchy's lavish spending, social inequality, and economic hardships. Key events, such as the storming of the Bastille and the execution of King Louis XVI, marked the rise of revolutionary ideals, including liberty, equality, and fraternity. The French Revolution had a profound impact on France and the world, inspiring revolutions in other countries and leading to the rise of Napoleon Bonaparte.",
+  "The pyramids of Egypt, built more than 4,000 years ago, served as tombs for the pharaohs and were intended to ensure their passage to the afterlife.",
 
-  "The Cold War, which lasted from the late 1940s to the early 1990s, was a period of political and ideological tension between the United States and the Soviet Union. It was marked by a nuclear arms race, espionage, proxy wars, and competing ideologies—capitalism and democracy versus communism and authoritarianism. Major events during the Cold War included the Cuban Missile Crisis, the Vietnam War, the space race, and the fall of the Berlin Wall. The end of the Cold War in 1991 marked the collapse of the Soviet Union and the rise of the United States as the world's sole superpower, though the legacy of the Cold War continues to influence global politics today.",
+  "The Taj Mahal, located in Agra, India, is a magnificent mausoleum built by the Mughal emperor Shah Jahan in memory of his wife Mumtaz Mahal. This white marble monument is a masterpiece of Mughal architecture, combining Persian, Turkish and Indians.",
+
+  "Antarctica, a frozen and almost uninhabited continent, is the coldest and driest place on Earth. It contains about 70% of the world's fresh water in the form of ice.",
+
+  "The Louvre in Paris, the world's largest art museum, houses thousands of works of art, spanning ancient to modern times. A former royal residence, the museum became a major cultural center after it was transformed into a public museum in 1793.",
+
+  "The Grand Canyon, located in Arizona in the United States, is a canyon over 450 kilometers long and over 1,800 meters deep. It is one of the largest and deepest canyons in the world.",
+
+  "The Nile, the longest river in the world, flows through several African countries, including Egypt and Sudan.",
+
+
+
+  // ---------------------------------------- History ---------------------------------------- //
+  "World War II, which lasted from 1939 to 1945, had a profound impact on the history of the 20th century. It involved many countries around the world, pitting the Allies against the Axis powers.",
+
+  "The fall of the Berlin Wall in 1989 was a major historical event that symbolized the end of the Cold War and the reconciliation of Germany after decades of division. The wall, built in 1961 by the East German regime, divided Berlin in two, preventing East German citizens from fleeing to the West.",
+
+  "In 1932, Australia declared war on… emus, large flightless birds, because they devastated crops.",
+
+  "During the Cold War, the CIA considered using pigeons equipped with miniature cameras to spy on the Soviet Union.",
 
 
 
   // ---------------------------------------- Video Games ---------------------------------------- //
-  "The first video games date back to the 1950s, but it was in 1972 that the industry truly took off with the creation of Pong, a simple yet innovative arcade game developed by Atari. This table tennis game was an immediate success and marked the beginning of the commercial video game era. Since then, the industry has seen phenomenal growth, evolving from simple arcade games to 3D immersive experiences with realistic graphics, open worlds, and increasingly complex narratives.",
+  "The first video games date back to the 1950s, but it was in 1972 that the industry took off with the creation of Pong, a simple but innovative arcade game, developed by Atari.",
 
-  "The Super Mario saga, created by Nintendo, is one of the most iconic video game franchises in the world. The first Super Mario Bros. game was released in 1985 on the NES console and revolutionized platform games. With Mario, Luigi, and Princess Peach, this series not only redefined the genre but also propelled Nintendo into a major player in the industry. The franchise has spawned numerous games, films, TV shows, and even theme park attractions, and Mario has become a global icon of video gaming.",
+  "The first Super Mario Bros. game was released in 1985 on the NES console and revolutionized platform games. It is also one of the most popular games of all time.",
 
-  "The emergence of Minecraft, developed by Mojang in 2009, marked a turning point in the video game industry. This open-world construction game quickly captured the imagination of players with its simplicity, pixelated world, and endless possibilities. Through its creativity and multiplayer mode, Minecraft became one of the best-selling video games of all time, influencing not only the gaming industry but also education, architecture, and art.",
+  "Minecraft, developed by Mojang in 2009, is an open-world construction game that quickly captured the imagination of players thanks to its simplicity, its pixelated world and its endless possibilities.",
 
-  "The game The Legend of Zelda: Ocarina of Time, released in 1998 for the Nintendo 64, is often considered one of the greatest video games of all time. With its innovative gameplay, open world, and deep narrative elements, the game revolutionized how adventure games were designed. Its impact is still felt today, with many modern games taking inspiration from its mechanics. It also introduced puzzle-solving and storytelling elements that have become standards in the industry.",
+  `In the first The Legend of Zelda game (1986), you could start the game without any weapons. `,
 
-  "Esports (electronic sports) is a rapidly growing industry that involves professional video game competitions. Games like League of Legends, Dota 2, Counter-Strike, and Fortnite attract millions of spectators, while top players have become true celebrities. Esports has even become a major event, with international leagues and tournaments, massive prize money, and growing media coverage. This phenomenon has changed the way video games are perceived, turning them into a legitimate sport in their own right.",
+  "Esports is a growing industry that brings together professional video game competitions. Games like League of Legends, Dota 2, Counter-Strike, and Fortnite attract millions of viewers, while top professional players have become celebrities.",
+
+  "In the original The Sims, Sims could die trying to cook if they hadn't learned how to properly use a stove.",
+
+  "Diablo II developers included a secret level where players fight hordes of axe-wielding cows.",
+
+  "Pac-Man creator Toru Iwatani took inspiration from a pizza that was missing a slice to create the character's iconic design.",
+
+  "In The Sims 2, a rare bug caused an infinite flood if a Sim took a shower next to an open window.",
+
+  "In the original DOOM, the HUD screen displays your character's face (Doomguy) reacting to his injuries.",
 
 
 
   // ---------------------------------------- Sport ---------------------------------------- //
-  "Basketball, invented in 1891 by James Naismith in Springfield, Massachusetts, has become one of the most popular sports in the world. Its rapid development in the United States led to the formation of the NBA (National Basketball Association) in 1946. Legendary players like Michael Jordan, Kobe Bryant, and LeBron James transcended the sport, attracting millions of fans worldwide and making basketball a true spectacle, with games broadcast globally and immense fanfare.",
+  "The modern Olympic Games, inspired by the ancient Greek Olympic Games, were reestablished in 1896 in Athens. Since then, the Games have been held every four years and bring together athletes from all over the world for an international competition.",
 
-  "The Tour de France, one of the most prestigious cycling races in the world, was created in 1903 by the newspaper L'Auto to boost its sales. Since then, it has become an annual tradition that attracts millions of spectators, both in France and internationally. This three-week challenge is considered one of the toughest competitions in the cycling sport, combining endurance, strategy, and technical mastery of mountainous terrain. Iconic figures like Eddy Merckx, Bernard Hinault, and more recently, Chris Froome, have made their mark on its history.",
+  "Wilt Chamberlain holds the record for the most points scored in a single NBA game, with 100 points in 1962. This incredible record was achieved without the help of the three-point line, because it did not even exist yet!",
 
-  "American football, born in the United States in the late 19th century, has become a major cultural phenomenon. The National Football League (NFL) was founded in 1920 and quickly gained popularity. The Super Bowl, the annual NFL championship game, is one of the most-watched sporting events in the world, not only for the football but also for the halftime shows and high-profile commercials. Players like Joe Montana, Tom Brady, and Peyton Manning have become legends, and the NFL continues to captivate millions of fans around the globe.",
+  "The Tour de France, one of the most prestigious cycling races in the world, was created in 1903 by the newspaper L'Auto in order to increase its sales. Since then, it has become an annual tradition that attracts millions of spectators, both in France and internationally.",
 
-  "Cricket is one of the most popular sports in countries like India, England, Australia, and Pakistan. Although it has been played for centuries, modern cricket evolved in the 20th century with the introduction of the 20-over format known as Twenty20 (T20). This fast-paced and exciting format has helped bring cricket to a larger audience, with events like the Indian Premier League (IPL) attracting millions of spectators worldwide. Cricket is more than just a sport; it's a cultural phenomenon in many countries.",
+  "The longest Test cricket match in history took place in 1939 between England and South Africa South. After 12 days of play, the match ended without a winner, as the English team had to catch their boat home before finishing the game.",
 
-  "Rugby, a team sport where two teams compete to score tries with an oval ball, is particularly popular in New Zealand, England, France, and Australia. The Haka, a traditional Māori dance performed by the New Zealand team before each match, is one of the most iconic traditions in rugby. The Rugby World Cup, held every four years, is one of the most-watched sporting events in the world, with immense fervor surrounding each edition."
+  "In 1995, at the Rugby World Cup, New Zealand beat Japan by a staggering 145-17. This match still holds the record for the most points scored in a World Cup."
 
 ];

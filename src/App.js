@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Import depuis parts
 import Header from './components/parts/Header';
+import Footer from './components/parts/Footer';
 
 // Import depuis pages
 import HomePage from './components/pages/HomePage';
@@ -29,6 +30,7 @@ function App() {
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/about" element={<PrivateRoute><About /></PrivateRoute>} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

@@ -155,17 +155,30 @@ const TypingTest = () => {
                 {state.language === "en" ? "Statistics" : "Statistiques"}
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: state.language === "en" ? "Time Left" : "Temps restant", value: `${state.timeLeft}s`, bg: "indigo" },
-                  { label: state.language === "en" ? "Words per Minute" : "Mots par minute", value: state.wordsPerMinute, bg: "purple" },
-                  { label: state.language === "en" ? "Errors" : "Erreurs", value: state.errors, bg: "red" },
-                  { label: state.language === "en" ? "Accuracy" : "Précision", value: `${accuracy}%`, bg: "green" },
-                ].map(({ label, value, bg }, i) => (
-                  <div key={i} className={`bg-${bg}-100 p-4 rounded-lg text-center`}>
-                    <div className={`text-sm text-${bg}-600 font-medium`}>{label}</div>
-                    <div className={`text-3xl font-bold text-${bg}-800`}>{value}</div>
+                <div className="bg-indigo-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-indigo-600 font-medium">
+                    {state.language === "en" ? "Time Left" : "Temps restant"}
                   </div>
-                ))}
+                  <div className="text-3xl font-bold text-indigo-800">{state.timeLeft}s</div>
+                </div>
+                <div className="bg-purple-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-purple-600 font-medium">
+                    {state.language === "en" ? "Words per Minute" : "Mots par minute"}
+                  </div>
+                  <div className="text-3xl font-bold text-purple-800">{state.wordsPerMinute}</div>
+                </div>
+                <div className="bg-red-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-red-600 font-medium">
+                    {state.language === "en" ? "Errors" : "Erreurs"}
+                  </div>
+                  <div className="text-3xl font-bold text-red-800">{state.errors}</div>
+                </div>
+                <div className="bg-green-100 p-4 rounded-lg text-center">
+                  <div className="text-sm text-green-600 font-medium">
+                    {state.language === "en" ? "Accuracy" : "Précision"}
+                  </div>
+                  <div className="text-3xl font-bold text-green-800">{accuracy}%</div>
+                </div>
               </div>
             </div>
 

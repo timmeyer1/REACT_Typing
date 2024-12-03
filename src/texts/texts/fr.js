@@ -33,7 +33,7 @@ export const textsFr = [
 
   "Le Louvre à Paris, le plus grand musée d'art au monde, abrite des milliers d'oeuvres d'art, allant de l'Antiquité à l'époque moderne. Ancienne résidence royale, le musée est devenu un centre culturel majeur après sa transformation en musée public en 1793.",
 
-  "Le Grand Canyon, situé en Arizona aux États-Unis, est un canyon de plus de 450 kilomètres de long et d'une prondeur atteignant plus de 1800 mètres. C'est l'un des canyons les plus grands et les plus profonds du monde.",
+  "Le Grand Canyon, situé en Arizona aux États-Unis, est un canyon de plus de 450 kilomètres de long et d'une profondeur atteignant plus de 1800 mètres. C'est l'un des canyons les plus grands et les plus profonds du monde.",
 
   "Le Nil, le plus long fleuve du monde, traverse plusieurs pays d'Afrique, notamment l'Égypte et le Soudan.",
 

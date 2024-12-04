@@ -29,7 +29,7 @@ export const textsFr = [
 
   "Le Taj Mahal, situé à Agra en Inde, est un mausolée magnifique construit par l'empereur moghol Shah Jahan en mémoire de sa femme Mumtaz Mahal. Ce monument en marbre blanc est un chef-d'oeuvre de l'architecture moghole, combinant des éléments persans, turcs et indiens.",
 
-  "L'Antarctique, continent gelé et presque inhabité, est le lieu le plus froid et le plus sec de la planète. Il contient environ 70 % de l'eau douce mondiale sous forme de glace.",
+  "L'Antarctique, continent gelé et presque inhabité, est le lieu le plus froid et le plus sec de la planète. Il contient environ 70% de l'eau douce mondiale sous forme de glace.",
 
   "Le Louvre à Paris, le plus grand musée d'art au monde, abrite des milliers d'oeuvres d'art, allant de l'Antiquité à l'époque moderne. Ancienne résidence royale, le musée est devenu un centre culturel majeur après sa transformation en musée public en 1793.",
 
@@ -43,16 +43,16 @@ export const textsFr = [
 
   "La chute du mur de Berlin en 1989 est un événement historique majeur qui a symbolisé la fin de la Guerre froide et la réconciliation de l'Allemagne après des décennies de division. Le mur, construit en 1961 par le régime est-allemand, séparait Berlin en deux, empêchant les citoyens de l'Allemagne de l'Est de fuir vers l'Ouest.",
 
-  "En 1932, l’Australie a déclaré la guerre… aux émeus, de grands oiseaux incapables de voler, car ils dévastaient les cultures.",
+  "En 1932, l'Australie a déclaré la guerre... aux émeus, de grands oiseaux incapables de voler, car ils dévastaient les cultures.",
 
-  "Pendant la guerre froide, la CIA a envisagé d’utiliser des pigeons équipés de caméras miniatures pour espionner l’Union soviétique.",
+  "Pendant la guerre froide, la CIA a envisagé d'utiliser des pigeons équipés de caméras miniatures pour espionner l'Union soviétique.",
 
   // ---------------------------------------- Jeux-vidéos ---------------------------------------- //
-  "Les premiers jeux vidéo remontent aux années 1950, mais c'est en 1972 que l'industrie a pris son envol avec la création de Pong, un jeu d'arcade simple mais innovant, développé par Atari.",
+  "Les premiers jeux-vidéo remontent aux années 1950, mais c'est en 1972 que l'industrie a pris son envol avec la création de Pong, un jeu d'arcade simple mais innovant, développé par Atari.",
 
   "Le premier jeu Super Mario Bros. est sorti en 1985 sur la console NES et a révolutionné les jeux de plateforme. C'est aussi l'un des jeux les plus populaires de tous les temps.",
 
-  "Minecraft, développé par Mojang en 2009, est un jeu de jeu de construction en monde ouvert a rapidement capturé l'imaginaire des joueurs grâce à sa simplicité, son monde pixelisé et ses possibilités infinies.",
+  "Minecraft, développé par Mojang en 2009, est un jeu de construction en monde ouvert qui a rapidement capturé l'imaginaire des joueurs grâce à sa simplicité, son monde pixelisé et ses possibilités infinies.",
 
   `Dans le premier jeu The Legend of Zelda (1986), vous pouviez commencer le jeu sans aucune arme. `,
 
@@ -64,9 +64,9 @@ export const textsFr = [
 
   "Toru Iwatani, le créateur de Pac-Man, s'est inspiré d'une pizza à laquelle il manquait une part pour créer le design emblématique du personnage.",
 
-  "Dans The Sims 2, un bug rare provoquait une inondation infinie si un Sim prenait une douche à côté d’une fenêtre ouverte",
+  "Dans The Sims 2, un bug rare provoquait une inondation infinie si un Sim prenait une douche à côté d'une fenêtre ouverte",
 
-  "Dans le jeu original DOOM, l’écran du HUD affiche le visage de votre personnage (Doomguy) réagissant à ses blessures.",
+  "Dans le jeu original DOOM, l'écran du HUD affiche le visage de votre personnage (Doomguy) réagissant à ses blessures.",
 
 
   // ---------------------------------------- Sport ---------------------------------------- //

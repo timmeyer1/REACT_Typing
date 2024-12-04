@@ -168,18 +168,34 @@ app.get('/top-scores', authenticateToken, (req, res) => {
 
         const userId = userResult[0].id;
 
-        db.query(
-            'SELECT * FROM Scores WHERE user_id = ? ORDER BY words_per_minute DESC LIMIT 10',
-            [userId],
-            (err, scores) => {
-                if (err) {
-                    return res.status(500).json({ message: 'Erreur lors de la récupération des scores.' });
-                }
-                res.json(scores);
+        db.query(`
+            SELECT 
+                id,
+                words_per_minute, 
+                accuracy, 
+                average_errors,
+                date_typed,
+                (
+                    (words_per_minute * 0.5) +  # Mots par minute (50%)
+                    (accuracy * 100 * 0.3) +    # Précision (30%)
+                    ((100 - (average_errors * 10)) * 0.2)  # Erreurs (20%) - inversé
+                ) as combined_score
+            FROM Scores 
+            WHERE user_id = ?
+            ORDER BY 
+                words_per_minute DESC,  # D'abord par vitesse (wps)
+                accuracy DESC,          # Ensuite par précision (%)
+                average_errors ASC      # Enfin par erreurs (moins = mieux)
+            LIMIT 10
+        `, [userId], (err, scores) => {
+            if (err) {
+                return res.status(500).json({ message: 'Erreur lors de la récupération des scores.' });
             }
-        );
+            res.json(scores);
+        });
     });
 });
+
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 5000;

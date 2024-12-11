@@ -80,7 +80,7 @@ export const textsEn = [
 
   "The Tour de France, one of the most prestigious cycling races in the world, was created in 1903 by the newspaper L'Auto in order to increase its sales. Since then, it has become an annual tradition that attracts millions of spectators, both in France and internationally.",
 
-  "The longest Test cricket match in history took place in 1939 between England and South Africa South. After 12 days of play, the match ended without a winner, as the English team had to catch their boat home before finishing the game.",
+  "The longest cricket match in history took place in 1939 between England and South Africa South. After 12 days of play, the match ended without a winner, as the English team had to catch their boat home before finishing the game.",
 
   "In 1995, at the Rugby World Cup, New Zealand beat Japan by a staggering 145-17. This match still holds the record for the most points scored in a World Cup."
 

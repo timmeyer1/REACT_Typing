@@ -76,7 +76,7 @@ export const textsFr = [
 
   "Le Tour de France, l'une des courses cyclistes les plus prestigieuses au monde, a été créé en 1903 par le journal L'Auto afin d'augmenter ses ventes. Depuis lors, il est devenu une tradition annuelle qui attire des millions de spectateurs, tant en France qu'à l'international.",
 
-  "Le match de Test Cricket le plus long de l'histoire a eu lieu en 1939 entre l'Angleterre et l'Afrique du Sud. Après 12 jours de jeu, le match s'est terminé sans vainqueur, car l'équipe anglaise devait prendre son bateau de retour avant de terminer la partie.",
+  "Le match de Cricket le plus long de l'histoire a eu lieu en 1939 entre l'Angleterre et l'Afrique du Sud. Après 12 jours de jeu, le match s'est terminé sans vainqueur, car l'équipe anglaise devait prendre son bateau de retour avant de terminer la partie.",
 
   "En 1995, lors de la Coupe du Monde de Rugby, la Nouvelle-Zélande a battu le Japon avec un score hallucinant de 145-17. Ce match détient toujours le record du plus grand nombre de points inscrits en Coupe du Monde."
 ];

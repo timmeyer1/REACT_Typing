@@ -14,6 +14,9 @@ create database typing_test;
 
 `npm install`
 
+### Execute run build
+`npm run build`
+
 ### Start project
 `npm start`
 
